@@ -7,6 +7,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.ClientConnectionManager;
@@ -16,6 +19,7 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -26,6 +30,7 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.omg.CORBA.UserException;
 
 import java.io.*;
+import java.sql.*;
 import java.util.*;
 
 import java.security.KeyManagementException;
@@ -33,6 +38,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 
 /**
  * Created by ezapata on 08-Oct-15.
@@ -73,7 +79,7 @@ public class Sender {
         registry.register(new Scheme("https", 443, sf));
         registry.register(new Scheme("https", 50001, sf));
         ClientConnectionManager ccm = new PoolingClientConnectionManager(registry);
-        client = new DefaultHttpClient();
+        client = new DefaultHttpClient(ccm);
     }
     public static String getDate(long timeStamp) {
         DateTimeFormatter isoDateFormat = ISODateTimeFormat.dateTime();
@@ -81,268 +87,306 @@ public class Sender {
         return isoDateStr;
     }
 
-    public static Map sendMessageToSAP(Map message, String url, String username, String password, File logFile, String tCode, long operationId)  {
+
+
+    public static Map getSomething(String endpoint) throws IOException {
+
+            System.out.println(endpoint);
+        HttpClient client = HttpClientBuilder.create().build();
+        HttpGet request = new HttpGet(endpoint);
         ObjectMapper objectMapper = new ObjectMapper();
-//        String hardCodedResponse = "{\"RFIDEquipmentDetails_MT\":{\"Description\":\"GV 2 1/16-10K MAN STDD\",\"UserStatus\":\"0006\",\"SystemStatus\":\"AVLB\",\"AssetNum\":null,\"ValidFromDate\":\"2012-02-16\",\"ValidToDate\":\"9999-12-31\",\"SerialNum\":\"000000000000501887\",\"MaterialNum\":\"90-130-316\",\"CategoryCode\":\"S\",\"Owner\":null,\"Administrator\":null,\"CurrentLocation\":null,\"MaintPlant\":\"7370\",\"ServiceCallStatus\":\"0\"}}";
-////        String hardCodedResponse = "{\"RFIDEquipmentDetails_MT\":{\"Description\":\"GV 4 1/16-15K HYD STDD\",\"UserStatus\":\"0006\",\"SystemStatus\":\"AVLB\",\"AssetNum\":\"000006024918\",\"ValidFromDate\":\"2013-11-22\",\"ValidToDate\":\"9999-12-31\",\"SerialNum\":\"2006-01-276T\",\"MaterialNum\":\"P150640\",\"CategoryCode\":\"R\",\"Owner\":null,\"Administrator\":null,\"CurrentLocation\":null,\"MaintPlant\":\"7320\",\"ServiceCallStatus\":\"0\"}}\n";
-//        int i = 10;
-//        if (i == 10) {
-//            try {
-//                Map<String, Object> hardCodedResult = objectMapper.readValue(hardCodedResponse, HashMap.class);
-//                return hardCodedResult;
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-        long startTime = System.currentTimeMillis();
+        // add request header
+       // request.addHeader("User-Agent", USER_AGENT);
+        request.addHeader("content-type", "application/json");
+        request.addHeader("Api_key","root");
+        HttpResponse response = client.execute(request);
         Map finalResult = null;
         boolean error = false;
         String errorMessage = null;
-        try {
-            if (logFile != null) {
-                //logger.warn("writing log file: " + logFile.getAbsolutePath());
-
-                FileUtils.writeStringToFile(logFile, "TransactionCode: " + tCode + "\r\n");
-                FileUtils.writeStringToFile(logFile, "OperationId:" + operationId + "\r\n");
-                FileUtils.writeStringToFile(logFile, "Sap User: " + username + "\r\n");
+        System.out.println("Response Code : "
+                + response.getStatusLine().getStatusCode());
+        HttpEntity entity = response.getEntity();
+        StringBuffer responseStringBuffer = new StringBuffer();
+        if (entity != null && entity.getContent() != null) {
+            BufferedReader in = new BufferedReader(new InputStreamReader(entity.getContent()));
+            String inputLine;
+            while ((inputLine = in.readLine()) != null) {
+                responseStringBuffer.append(inputLine);
             }
-            if (url == null) {
-                //throw new UserException("invalid url for sap synchronization " + url);
-                System.out.println("invalid URL");
-            }
-            HttpPost httpPost = new HttpPost(url);
-            String jsonBody = "{}";
-            if (message != null) {
-                System.out.println("el mensage no es null");
-                jsonBody = objectMapper.writeValueAsString(message);
-            }
-
-
-            System.out.println("Sending message to SAP, transactionCode: " + tCode + ", operation: " + operationId + ", input: " + jsonBody);
-            httpPost.setEntity(new StringEntity(jsonBody));
-
-            HttpUriRequest request = httpPost;
-            request.addHeader("content-type", "application/json");
-            String encoding = Base64.encodeBase64String((username + ":" + password).getBytes());
-            request.setHeader("Authorization", "Basic " + encoding);
-
-            if (logFile != null) {
-                FileUtils.writeStringToFile(logFile, "Input:\r\n");
-                FileUtils.writeStringToFile(logFile, jsonBody + "\r\n");
-            }
-
-            HttpResponse httpResponse = client.execute(request);
-
-            HttpEntity entity = httpResponse.getEntity();
-            StringBuffer responseStringBuffer = new StringBuffer();
-            if (entity != null && entity.getContent() != null) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(entity.getContent()));
-                String inputLine;
-                while ((inputLine = in.readLine()) != null) {
-                    responseStringBuffer.append(inputLine);
-                }
-                in.close();
-            }
-            String responseString = responseStringBuffer.toString();
-            int statusCode = httpResponse.getStatusLine().getStatusCode();
-
-           // logger.warn("Receiving message from SAP, transactionCode: " + tCode+ ", operation: " + operationId + ", output: "+ responseString);
-
-            if (logFile != null) {
-                FileUtils.writeStringToFile(logFile, "Output: Status " + statusCode + " Body" + "\r\n");
-                FileUtils.writeStringToFile(logFile, responseString + "\r\n");
-            }
-
-            if (StringUtils.isNotBlank(responseString)) {
-                Map<String, Object> mapResult = new HashMap<String, Object>();
-                try {
-                    mapResult = objectMapper.readValue(responseString, HashMap.class);
-                    if (statusCode == 401 || statusCode == 403) {
-                        error = true;
-                        errorMessage = "Invalid Credentials to connect to SAP";
-                    } else if (statusCode == 200 || statusCode == 201) {
-                        String error_ = (String) mapResult.get("error");
-                        if (StringUtils.isNotEmpty(error_)) {
-                            error = true;
-                            errorMessage = error_;
-                        }
-                        Map aux = (Map) mapResult.get("RFIDEquipmentDetails_MT");
-                        if (aux != null) {
-                            error_ = (String) aux.get("ErrorMessage");
-                            if (StringUtils.isNotEmpty(error_)) {
-                                error = true;
-                                errorMessage = error_;
-                            }
-                        }
-                    } else {
-                        error = true;
-                    }
-                    finalResult = mapResult;
-                } catch (Exception ex) {
-                    error = true;
-                    errorMessage = ex.getMessage();
-                }
-            }  else {
-                error = true;
-                errorMessage = "Empty Response from SAP";
-            }
-        } catch (Exception ex) {
-            //logger.warn("Error Sending message to SAP, transactionCode: " + tCode+ ", operation: " + operationId + ", exception: "+ (StringUtils.isNotEmpty(ex.getMessage())? ex.getMessage() : ex.getClass().getSimpleName()));
-            ex.printStackTrace();
-            //ex.getStackTrace();
-            try {
-                if (logFile != null) {
-                    FileUtils.writeStringToFile(logFile, "Status: exception \r\n");
-                    FileUtils.writeStringToFile(logFile, ExceptionUtils.getStackTrace(ex) + "\r\n");
-                }
-            } catch (IOException e) {
-              //  logger.error(e.getMessage());
-            }
-            if (ex instanceof java.net.UnknownHostException || ex instanceof UserException || ex instanceof IllegalStateException) {
-                System.out.println(ex.getMessage());
-                //throw new UserException(ex.getMessage());
-            } else {
-                throw new RuntimeException(StringUtils.isNotEmpty(ex.getMessage())? ex.getMessage(): ex.getClass().getSimpleName());
-            }
-        } finally {
-            try {
-                if (logFile != null) {
-                    FileUtils.writeStringToFile(logFile, "Status: " + (error ? " error " + errorMessage : " success" + "\r\n"));
-                }
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-            }
-            long finalTime = System.currentTimeMillis();
-            try {
-                if (logFile != null) {
-                    FileUtils.writeStringToFile(logFile, "Time: start " + startTime + " end " + finalTime + " elapsed " + (finalTime - startTime) + "\r\n");
-                }
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-            }
+            in.close();
         }
+        String responseString = responseStringBuffer.toString();
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (StringUtils.isNotBlank(responseString)) {
+            Map<String, Object> mapResult = new HashMap<String, Object>();
+            try {
+                mapResult = objectMapper.readValue(responseString, HashMap.class);
+                //List<Object> result=objectMapper.readValue(responseString,List.class);
+               //     Map aux = (Map) mapResult.get("RFIDEquipmentDetails_MT");
+                    //List lis=(List)result.get("Points");
+                //System.out.print("entro");
+                finalResult = mapResult;
+
+
+            } catch (Exception ex) {
+                error = true;
+                errorMessage = ex.getMessage();
+            }
+        }  else {
+            error = true;
+            errorMessage = "Empty Response from SAP";
+        }
+
+        List<Map<String,Object>> objlist=(List)finalResult.get("results");
+        Map<String,Object> es=objlist.get(0);
+      //  System.out.print(es.get("zonePoints"));
         return finalResult;
     }
-    public static void main(String[]arg){
-       File logFile = null;
-        try {
-            logFile = File.createTempFile("restFile", ".json");
-        } catch (IOException e) {
-            e.printStackTrace();
+
+    public static void patchSomething(String endpoint,Map message) throws IOException {
+
+
+        HttpClient client = HttpClientBuilder.create().build();
+        HttpPatch request=new HttpPatch(endpoint);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        // add request header
+        // request.addHeader("User-Agent", USER_AGENT);
+        request.addHeader("content-type", "application/json");
+        request.addHeader("Api_key","root");
+        String jsonBody="";
+        if (message != null) {
+            System.out.println("el mensage no es null");
+            jsonBody = objectMapper.writeValueAsString(message);
+            //System.out.println("json en el patch"+jsonBody);
+            //jsonBody=jsonBody.replace("=",":");
         }
-        String url = "http://kbg1pit0.kongsberg.fmcweb.com:50000/AdvantcoRESTAdapter/RESTServlet?channel=RFID_Equipment_REST_Sync_S_CC&service=RFID_QA";
-        String username = "RFIDAPPLUSER";
-        String password = "rfid4FMC";
-        String tCode="transaction";
-///Prueba con el csv
-        File input=new File("C:\\FMC.csv");
-        FileReader fr=null;
-        try {
-             fr=new FileReader(input);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        BufferedReader br = new BufferedReader(fr);
-        String linea;
-        try {
-            while((linea=br.readLine())!=null) {
-                System.out.println(linea);
-                String total[]=linea.split(",");
-                try {
-                    Map message;
-                    message = new HashMap< >();
-                    Map messageDetail = new HashMap< >();
-                    message.put("RFIDEquipmentTag_MT", messageDetail);
-                    messageDetail.put("TagID", total[11]);
-                    messageDetail.put("EquipmentNum", total[12]);
-                    messageDetail.put("DateTime", getDate(Long.parseLong(total[10])));
-                    messageDetail.put("Plant", total[0]);
-                    messageDetail.put("User", total[4]);
-                    messageDetail.put("Action", "02");
-                    sendMessageToSAP(message, url, username, password, logFile, tCode, 2L);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-                try {
-                    Map message = new HashMap<>();
-                    Map messageDetail = new HashMap<>();
-                    message.put("RFIDEquipmentTag_MT", messageDetail);
-                    messageDetail.put("TagID", total[11]);
-                    messageDetail.put("EquipmentNum", total[12]);
-                    messageDetail.put("DateTime", getDate(Long.parseLong(total[10])));
-                    messageDetail.put("Plant", total[0]);
-                    messageDetail.put("User", total[4]);
-                    messageDetail.put("Action","01");
-                    sendMessageToSAP(message, url, username, password, logFile, tCode, 1L);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-             /*   try {
-                    Map message = new HashMap<>();
-                    Map messageDetail = new HashMap<>();
-                    message.put("RFIDEquipmentStatus_MT", messageDetail);
-                    messageDetail.put("TagID", "201309228726030001019599");
-                    messageDetail.put("EquipmentNum", "10619276");
-                    messageDetail.put("DateTime", getDate(new Date().getTime()));
-                    messageDetail.put("Plant", "7395");
-                    messageDetail.put("User", "root");
-                    messageDetail.put("ScanZone", "7395_NI");
-                    sendMessageToSAP(message, url, username, password, logFile, tCode, 3L);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }*/
+        request.setEntity(new StringEntity(jsonBody));
+
+        HttpResponse response = client.execute(request);
+        Map finalResult = null;
+        boolean error = false;
+        String errorMessage = null;
+        System.out.println("Response Code : "
+                + response.getStatusLine().getStatusCode());
+        HttpEntity entity = response.getEntity();
+        StringBuffer responseStringBuffer = new StringBuffer();
+        if (entity != null && entity.getContent() != null) {
+            BufferedReader in = new BufferedReader(new InputStreamReader(entity.getContent()));
+            String inputLine;
+            while ((inputLine = in.readLine()) != null) {
+                responseStringBuffer.append(inputLine);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            in.close();
         }
-//Aqui acaba la prueba
+        String responseString = responseStringBuffer.toString();
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (StringUtils.isNotBlank(responseString)) {
+            Map<String, Object> mapResult = new HashMap<String, Object>();
+            try {
+                mapResult = objectMapper.readValue(responseString, HashMap.class);
+        //        System.out.print("entro");
+                finalResult = mapResult;
 
 
-/*
-        try {
-            Map message;
-            message = new HashMap< >();
-            Map messageDetail = new HashMap< >();
-            message.put("RFIDEquipmentTag_MT", messageDetail);
-            messageDetail.put("TagID", "201309228726030001019599");
-            messageDetail.put("EquipmentNum", "10619276");
-            messageDetail.put("DateTime", getDate(new Date().getTime()));
-            messageDetail.put("Plant", "7395");
-            messageDetail.put("User", "root");
-            messageDetail.put("Action", "02");
-            sendMessageToSAP(message, url, username, password, logFile, tCode, 1L);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            } catch (Exception ex) {
+                error = true;
+                errorMessage = ex.getMessage();
+            }
+        }  else {
+            error = true;
+            errorMessage = "Empty Response from SAP";
         }
+
+        List<Map<String,Object>> objlist=(List)finalResult.get("results");
+//        Map<String,Object> es=objlist.get(0);
+       // System.out.print(es.get("zonePoints"));
+
+    }
+
+
+
+
+
+
+
+    public static void modifyZone(String host,String port,String group,String name,String thingTypeCode,String zonaName,String idThing,String timePush){
+
         try {
             Map message = new HashMap<>();
             Map messageDetail = new HashMap<>();
-            message.put("RFIDEquipmentTag_MT", messageDetail);
-            messageDetail.put("TagID", "201309228726030001019599");
-            messageDetail.put("EquipmentNum", "10619276");
-            messageDetail.put("DateTime", getDate(new Date().getTime()));
-            messageDetail.put("Plant", "7395");
-            messageDetail.put("User", "root");
-            messageDetail.put("Action","01");
-            sendMessageToSAP(message, url, username, password, logFile, tCode, 2L);
+            Map messageDetailZone = new HashMap<>();
+            message.put("group", group);
+            message.put("name", name);
+            message.put("serialNumber", name);
+            message.put("thingTypeCode", thingTypeCode);
+            message.put("udfs", messageDetail);
+            messageDetail.put("zone", messageDetailZone);
+            messageDetailZone.put("value", zonaName);
+            messageDetailZone.put("time",timePush);
+
+
+           // System.out.println("messa" + message.toString());
+            System.out.println("http://" + host + ":" + port + "/riot-core-services/api/thing/" + idThing);
+            patchSomething("http://" + host + ":" + port + "/riot-core-services/api/thing/" + idThing, message);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        try {
+
+    }
+    public static void modifyudf(){
+        /*try {
             Map message = new HashMap<>();
             Map messageDetail = new HashMap<>();
-            message.put("RFIDEquipmentStatus_MT", messageDetail);
-            messageDetail.put("TagID", "201309228726030001019599");
-            messageDetail.put("EquipmentNum", "10619276");
-            messageDetail.put("DateTime", getDate(new Date().getTime()));
-            messageDetail.put("Plant", "7395");
-            messageDetail.put("User", "root");
-            messageDetail.put("ScanZone", "7395_NI");
-            sendMessageToSAP(message, url, username, password, logFile, tCode, 3L);
+            Map messageDetailZone = new HashMap<>();
+            message.put("group", thingForProced.get("group"));
+            message.put("name", thingForProced.get("name"));
+            message.put("thingTypeCode", thingForProced.get("thingTypeCode"));
+            message.put("Action","01");
+            message.put("udf", messageDetail);
+            messageDetail.put("zone", messageDetailZone);
+            messageDetailZone.put("value", es.get("name"));
+            messageDetail.put("Customers","");
+
+            patchSomething(host + ":" + port + "/riot-core-services/api/thing/" + thingForProced.get("id"), message);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
 */
+
+    }
+
+    public static String groupThing(String idGroup,String host, String port) throws IOException {
+        Map<String,Object>group=getSomething("http://"+host+":"+port+"/riot-core-services/api/group/?where=id%3D"+idGroup);
+
+        List<Map<String,Object>> grou=(List)group.get("results");
+        if(group==null)System.out.print("si");
+       // System.out.print(group);
+        return grou.get(0).get("hierarchyName").toString();
+
+    }
+
+    public static void main(String[]arg) throws IOException {
+        Scanner lee=new Scanner(System.in);
+         int num_records=10;
+         double probability=0.9;
+        String host="10.100.1.195";
+
+        String port="8080";
+        String zoneExit="PoS";
+        String zoneIn="Entrance";
+        String thingTypeCode="customer_code";
+       /* System.out.println("Ingrese el host");
+        host=lee.nextLine();
+        System.out.println("Ingrese el puerto");
+        port=lee.nextLine();
+        System.out.println("Type the In Zone");
+        zoneIn=lee.nextLine();
+        System.out.println("Type the out Zone");
+        zoneExit=lee.nextLine();
+        System.out.println("Type the thingTypeCode");
+        thingTypeCode=lee.nextLine();*/
+       long current =System.currentTimeMillis();
+        Map<String,Object>zones=getSomething("http://"+host+":"+port+"/riot-core-services/api/zone/?pageSize=-1&where=!(name%3D"+zoneIn+")%26!(name%3D"+zoneExit+")");
+
+        Map<String,Object>things=getSomething("http://"+
+                host+":"+port+"/riot-core-services/api/thing/?pageSize=-1&where=thingType.thingTypeCode%3D"+thingTypeCode+"&extra=thingType%2Cgroup");
+        //System.out.print(things);
+
+        List<Map<String,Object>> objZones=(List)zones.get("results");
+        List<Map<String,Object>> objThings=(List)things.get("results");
+
+//        Map<String,Object> dd=(Map)objThings.get(0).get("thingType");
+  //      Map<String,Object> dd2=(Map)objThings.get(0).get("group");
+
+//        System.out.print(dd);
+  //      System.out.print(dd2.get("hierarchyName"));
+    //    System.out.print(objThings.get(0).get("name").toString());
+      //  System.out.print(objThings.get(0).get("id").toString());
+
+
+
+        //modifyZone(host, port, dd2.get("hierarchyName").toString(), objThings.get(0).get("name").toString(), dd.get("thingTypeCode").toString(), "Enance", objThings.get(0).get("id").toString());
+
+
+        //aqui empieza la simulacion
+
+        for( int i = 0; i <num_records ;i++ ) {
+            //necesito el thing para moverlo
+                Map<String,Object> thingForProced=objThings.get(i);
+                Map<String,Object> thingTypeforProced=(Map)thingForProced.get("thingType");
+                Map<String,Object> groupForthing=(Map)thingForProced.get("group");
+            int randomMoves=(int)(Math.random()*objZones.size());
+            Timestamp stamp = new Timestamp(current);
+            java.sql.Date date = new java.sql.Date(stamp.getTime());
+            Calendar cal = Calendar.getInstance();
+            cal.setTime ( date );
+
+            //hacer el primer movimiento a la zona o zonas de entrada
+
+            for (int j=1;j<=randomMoves;j++) {
+                int randomZone=(int)(Math.random()*objZones.size());
+                //sacar una zona a la suerte
+
+                Map<String,Object> es=objZones.get(randomZone);
+                int randomTime=(int)(Math.random()*11);
+                cal.add(Calendar.MINUTE, randomTime);
+                java.sql.Date date2 = new java.sql.Date(cal.getTime().getTime());
+
+                //logger.info(date2);
+                long initialTime=date2.getTime();
+                //aqui hacer el update del thing si es q la probabilidad nos deja
+                String TimePush=String.valueOf(initialTime);
+
+                Map<String,Object> thingsInZones=getSomething("http://"+host+":"+port+""+"/riot-core-services/api/things/?pageSize=-1&where=children.zone.value.name%3D"+es.get("name").toString()+"&treeView=false");
+                List<Map<String,Object>> listThings=(List)thingsInZones.get("results");
+                if(listThings!=null) {
+                    int thingInZoneRandom=(int)(Math.random()*listThings.size());
+                    //Map<String,Object>children=(Map)listThings.get(thingInZoneRandom).get("children");
+                    String thingTypeChildren=listThings.get(thingInZoneRandom).get("thingTypeCode").toString();
+                    String nameChild=listThings.get(thingInZoneRandom).get("name").toString();
+
+                   // System.out.print(listThings.get(thingInZoneRandom).get("groupId"));
+
+                    String groupthing=groupThing(listThings.get(thingInZoneRandom).get("groupId").toString(),host,port);
+
+                    if(probability+Math.random()>1) {
+                        try {
+                            Map message = new HashMap<>();
+                            Map messageDetail = new HashMap<>();
+                            Map messageDetailCustomer = new HashMap<>();
+                            message.put("group", groupthing);
+                            message.put("name", nameChild);
+                            message.put("thingTypeCode", thingTypeChildren);
+                            message.put("udfs", messageDetail);
+                            messageDetail.put("Customers",messageDetailCustomer);
+                            messageDetailCustomer.put("value", thingForProced.get("name"));
+                            messageDetailCustomer.put("time", TimePush);
+                            System.out.println("message" + message);
+                            System.out.println("patch"+"http://"+host + ":" + port + "/riot-core-services/api/thing/" + thingForProced.get("id"));
+                            patchSomething("http://"+host + ":" + port + "/riot-core-services/api/thing/" + listThings.get(thingInZoneRandom).get("id").toString(), message);
+                            modifyZone(host,port,groupForthing.get("hierarchyName").toString(),thingForProced.get("name").toString(),thingTypeforProced.get("thingTypeCode").toString(),es.get("code").toString(),thingForProced.get("id").toString(),TimePush);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }else{
+                        try {
+                            modifyZone(host,port,groupForthing.get("hierarchyName").toString(),thingForProced.get("name").toString(),thingTypeforProced.get("thingTypeCode").toString(),es.get("code").toString(),thingForProced.get("id").toString(),TimePush);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+
+                }
+                else{
+                    modifyZone(host,port,groupForthing.get("hierarchyName").toString(),thingForProced.get("name").toString(),thingTypeforProced.get("thingTypeCode").toString(),es.get("code").toString(),thingForProced.get("id").toString(),TimePush);
+                }
+            }
+
+
+
+        }
+
     }
 }
