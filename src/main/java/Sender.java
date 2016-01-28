@@ -138,7 +138,7 @@ public class Sender {
         }
 
         List<Map<String,Object>> objlist=(List)finalResult.get("results");
-        Map<String,Object> es=objlist.get(0);
+//        Map<String,Object> es=objlist.get(0);
       //  System.out.print(es.get("zonePoints"));
         return finalResult;
     }
@@ -226,8 +226,7 @@ public class Sender {
             messageDetailZone.put("time",timePush);
 
 
-           // System.out.println("messa" + message.toString());
-            System.out.println("http://" + host + ":" + port + "/riot-core-services/api/thing/" + idThing);
+            System.out.println(message);
             patchSomething("http://" + host + ":" + port + "/riot-core-services/api/thing/" + idThing, message);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -269,13 +268,15 @@ public class Sender {
 
     public static void main(String[]arg) throws IOException {
         Scanner lee=new Scanner(System.in);
-         int num_records=10;
-         double probability=0.9;
+         int num_records=100;
+         double probability=0.5;
         String host="10.100.1.195";
 
         String port="8080";
-        String zoneExit="PoS";
-        String zoneIn="Entrance";
+        String zoneExit="Exxit 1";
+        String zoneIn="Entrance 1";
+        zoneExit=zoneExit.replace(" ","%20");
+        zoneIn=zoneIn.replace(" ","%20");
         String thingTypeCode="customer_code";
        /* System.out.println("Ingrese el host");
         host=lee.nextLine();
@@ -305,7 +306,14 @@ public class Sender {
     //    System.out.print(objThings.get(0).get("name").toString());
       //  System.out.print(objThings.get(0).get("id").toString());
 
-
+        Map<String,Object>thingsRfid=getSomething("http://"+
+                host+":"+port+"/riot-core-services/api/thing/?pageSize=-1&where=thingType.thingTypeCode%3Ddefault_rfid_thingtype&extra=thingType%2Cgroup");
+        List<Map<String,Object>> objThingsR=(List)thingsRfid.get("results");
+        System.out.print("tamadasf"+objThingsR.size());
+        for (int k=0;k<objThingsR.size();k++){
+            System.out.print("sdaffasf");
+            modifyZone(host, port, ">ViZix.retail>Retail.Main.Store", objThingsR.get(k).get("name").toString(), "default_rfid_thingtype", objZones.get((int) (Math.random()*objZones.size())).get("code").toString(), objThingsR.get(k).get("id").toString(), String.valueOf(System.currentTimeMillis()));
+        }
 
         //modifyZone(host, port, dd2.get("hierarchyName").toString(), objThings.get(0).get("name").toString(), dd.get("thingTypeCode").toString(), "Enance", objThings.get(0).get("id").toString());
 
@@ -324,7 +332,7 @@ public class Sender {
             cal.setTime ( date );
 
             //hacer el primer movimiento a la zona o zonas de entrada
-
+            String timeForTheLast="";
             for (int j=1;j<=randomMoves;j++) {
                 int randomZone=(int)(Math.random()*objZones.size());
                 //sacar una zona a la suerte
@@ -338,10 +346,10 @@ public class Sender {
                 long initialTime=date2.getTime();
                 //aqui hacer el update del thing si es q la probabilidad nos deja
                 String TimePush=String.valueOf(initialTime);
-
-                Map<String,Object> thingsInZones=getSomething("http://"+host+":"+port+""+"/riot-core-services/api/things/?pageSize=-1&where=children.zone.value.name%3D"+es.get("name").toString()+"&treeView=false");
+                timeForTheLast=TimePush;
+                Map<String,Object> thingsInZones=getSomething("http://"+host+":"+port+""+"/riot-core-services/api/things/?pageSize=-1&where=children.zone.value.name%3D"+es.get("name").toString().replace(" ","%20")+"&treeView=false");
                 List<Map<String,Object>> listThings=(List)thingsInZones.get("results");
-                if(listThings!=null) {
+                if(listThings.size()>0) {
                     int thingInZoneRandom=(int)(Math.random()*listThings.size());
                     //Map<String,Object>children=(Map)listThings.get(thingInZoneRandom).get("children");
                     String thingTypeChildren=listThings.get(thingInZoneRandom).get("thingTypeCode").toString();
@@ -383,7 +391,7 @@ public class Sender {
                     modifyZone(host,port,groupForthing.get("hierarchyName").toString(),thingForProced.get("name").toString(),thingTypeforProced.get("thingTypeCode").toString(),es.get("code").toString(),thingForProced.get("id").toString(),TimePush);
                 }
             }
-
+            modifyZone(host,port,groupForthing.get("hierarchyName").toString(),thingForProced.get("name").toString(),thingTypeforProced.get("thingTypeCode").toString(),"Exxit.1",thingForProced.get("id").toString(),timeForTheLast);
 
 
         }
