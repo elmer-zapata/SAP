@@ -128,8 +128,8 @@ public class SenderZones {
             errorMessage = "Empty Response from SAP";
         }
 
-        List<Map<String,Object>> objlist=(List)finalResult.get("results");
-        Map<String,Object> es=objlist.get(0);
+       // List<Map<String,Object>> objlist=(List)finalResult.get("results");
+        //Map<String,Object> es=objlist.get(0);
         //  System.out.print(es.get("zonePoints"));
         return finalResult;
     }
@@ -295,10 +295,28 @@ public class SenderZones {
 
     }
 
-    public static void migrateZones(String hostGet,String portGet,String hostPut,String portPut,String idFacilityMap) throws IOException {
+    public static String getSomeValueGroup(String name,String host,String port,String something)throws IOException{
+        Map<String,Object>group=getSomething("http://localhost:8080/riot-core-services/api/group/?where=code%3D"+name);
+        List<Map<String,Object>> grou=(List)group.get("results");
+        return  grou.get(0).get(something).toString();
+    }
+
+    public static void migrateZones(String hostGet,String portGet,String hostPut,String portPut,String idFacilityMap,String groupForSearch) throws IOException {
         Map<String,Object>zones=getSomething(hostGet+":"+portGet+"/riot-core-services/api/zone/?pageSize=-1&where=localMap.id%3D"+idFacilityMap+"&extra=localMap%2Cgroup%2CzoneGroup%2CzoneType");
         System.out.print(hostGet+":"+portGet+"/riot-core-services/api/zone/?pageSize=1&where=localMap.id%3D"+idFacilityMap);
         Map<String,Object>zoneType=getSomething("http://localhost:8080/riot-core-services/api/zoneType/");
+
+        String idGroup=getSomeValueGroup(groupForSearch,hostPut,portPut,"id");
+        Map<String,Object>zoneGroup=getSomething(hostPut+":8080/riot-core-services/api/zoneGroup/?where=group.id%3D"+idGroup);
+        System.out.print(zoneGroup);
+        List<Map<String,Object>> listZoneGroup=(List)zoneGroup.get("results");
+        String idZG=listZoneGroup.get(0).get("id").toString();
+
+        Map<String,Object>localMap=getSomething("http://localhost:8080/riot-core-services/api/localMap/?where=name%3DMain%20Store");
+        List<Map<String,Object>> map=(List)localMap.get("results");
+        String idMap=map.get(0).get("id").toString();
+
+
         List<Map<String,Object>>listZoneType=(List)zoneType.get("results");
 
         List<Map<String,Object>>listZone=(List)zones.get("results");
@@ -319,9 +337,9 @@ public class SenderZones {
                 message.put("code",oneZone.get("code"));
                 message.put("description", oneZone.get("description"));
                 message.put("color",oneZone.get("color"));
-                message.put("localMap.id",1);
-                message.put("zoneGroup.id",1);
-                message.put("group.id",3);
+                message.put("localMap.id",Integer.parseInt(idMap));
+                message.put("zoneGroup.id",Integer.parseInt(idZG));
+                message.put("group.id",Integer.parseInt(idGroup));
                 message.put("zoneType",listZoneType.get(0));
 
                 System.out.println(message);
@@ -349,7 +367,7 @@ public class SenderZones {
         String idFacilityMap="56";
         long current =System.currentTimeMillis();
 
-        migrateZones("http://saturn.mojix.com","8080","http://10.100.1.195","8080",idFacilityMap);
+        migrateZones("http://saturn.mojix.com","8080","http://"+host,"8080",idFacilityMap,"Retail.Main.Store");
 
 
         //List<Map<String,Object>> objZones=(List)zones.get("results");

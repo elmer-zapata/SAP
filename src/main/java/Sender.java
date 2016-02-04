@@ -233,26 +233,27 @@ public class Sender {
         }
 
     }
-    public static void modifyudf(){
-        /*try {
+    public static void modifyudfString(String host,String port,String group,String name,String thingTypeCode,String zonaName,String idThing,String timePush,String key){
+        try {
             Map message = new HashMap<>();
             Map messageDetail = new HashMap<>();
             Map messageDetailZone = new HashMap<>();
-            message.put("group", thingForProced.get("group"));
-            message.put("name", thingForProced.get("name"));
-            message.put("thingTypeCode", thingForProced.get("thingTypeCode"));
-            message.put("Action","01");
-            message.put("udf", messageDetail);
-            messageDetail.put("zone", messageDetailZone);
-            messageDetailZone.put("value", es.get("name"));
-            messageDetail.put("Customers","");
+            message.put("group", group);
+            message.put("name", name);
+            message.put("serialNumber", name);
+            message.put("thingTypeCode", thingTypeCode);
+            message.put("udfs", messageDetail);
+            messageDetail.put(key, messageDetailZone);
+            messageDetailZone.put("value", zonaName);
+            messageDetailZone.put("time",timePush);
 
-            patchSomething(host + ":" + port + "/riot-core-services/api/thing/" + thingForProced.get("id"), message);
+
+            System.out.println(message);
+            System.out.println(idThing);
+            patchSomething("http://" + host + ":" + port + "/riot-core-services/api/thing/" + idThing, message);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
-*/
 
     }
 
@@ -266,18 +267,35 @@ public class Sender {
 
     }
 
+    public static boolean haveProduct(Map<String,Object>a) throws IOException {
+        Map<String,Object>group=getSomething("http://localhost:8080/riot-core-services/api/things/?where=groupId%3D8%26thingTypeCode%3Dproduct_code%26Customers.value._id%3D"+a.get("id")+"&treeView=false");
+
+        List<Map<String,Object>> grou=(List)group.get("results");
+        if(grou.size()>0)
+        if(grou.get(0).get("groupId").toString()!=null)
+            return true;
+        return false;
+
+
+
+    }
+
     public static void main(String[]arg) throws IOException {
         Scanner lee=new Scanner(System.in);
-         int num_records=100;
+         int num_records=10;
          double probability=0.5;
         String host="10.100.1.195";
 
         String port="8080";
-        String zoneExit="Exxit 1";
-        String zoneIn="Entrance 1";
+        String zoneExit="Main Exit";
+        String zoneIn="Main Entrance";
         zoneExit=zoneExit.replace(" ","%20");
         zoneIn=zoneIn.replace(" ","%20");
         String thingTypeCode="customer_code";
+
+        String Fitting1="Fitting.Room.1";
+        String Fitting2="Fitting.Room.2";
+
        /* System.out.println("Ingrese el host");
         host=lee.nextLine();
         System.out.println("Ingrese el puerto");
@@ -289,7 +307,9 @@ public class Sender {
         System.out.println("Type the thingTypeCode");
         thingTypeCode=lee.nextLine();*/
        long current =System.currentTimeMillis();
+        // get things different
         Map<String,Object>zones=getSomething("http://"+host+":"+port+"/riot-core-services/api/zone/?pageSize=-1&where=!(name%3D"+zoneIn+")%26!(name%3D"+zoneExit+")");
+        //Map<String,Object>zonesFitting=getSomething("http://"+host+":"+port+"/riot-core-services/api/zone/?pageSize=-1&where=!(name%3D"+zoneIn+")%26!(name%3D"+zoneExit+")");
 
         Map<String,Object>things=getSomething("http://"+
                 host+":"+port+"/riot-core-services/api/thing/?pageSize=-1&where=thingType.thingTypeCode%3D"+thingTypeCode+"&extra=thingType%2Cgroup");
@@ -298,21 +318,19 @@ public class Sender {
         List<Map<String,Object>> objZones=(List)zones.get("results");
         List<Map<String,Object>> objThings=(List)things.get("results");
 
-//        Map<String,Object> dd=(Map)objThings.get(0).get("thingType");
-  //      Map<String,Object> dd2=(Map)objThings.get(0).get("group");
 
-//        System.out.print(dd);
-  //      System.out.print(dd2.get("hierarchyName"));
-    //    System.out.print(objThings.get(0).get("name").toString());
-      //  System.out.print(objThings.get(0).get("id").toString());
-
+        //zones different that in or out
         Map<String,Object>thingsRfid=getSomething("http://"+
-                host+":"+port+"/riot-core-services/api/thing/?pageSize=-1&where=thingType.thingTypeCode%3Ddefault_rfid_thingtype&extra=thingType%2Cgroup");
+                host+":"+port+"/riot-core-services/api/thing/?pageSize=-1&where=thingType.thingTypeCode%3Dretail.RFID.tag&extra=thingType%2Cgroup");
         List<Map<String,Object>> objThingsR=(List)thingsRfid.get("results");
+
+
+
+
         System.out.print("tamadasf"+objThingsR.size());
         for (int k=0;k<objThingsR.size();k++){
-            System.out.print("sdaffasf");
-            modifyZone(host, port, ">ViZix.retail>Retail.Main.Store", objThingsR.get(k).get("name").toString(), "default_rfid_thingtype", objZones.get((int) (Math.random()*objZones.size())).get("code").toString(), objThingsR.get(k).get("id").toString(), String.valueOf(System.currentTimeMillis()));
+            System.out.print("modifyZone");
+            modifyZone(host, port, ">ViZix.retail>Retail.Main.Store", objThingsR.get(k).get("name").toString(), "retail.RFID.tag", objZones.get((int) (Math.random()*objZones.size())).get("code").toString(), objThingsR.get(k).get("id").toString(), String.valueOf(System.currentTimeMillis()));
         }
 
         //modifyZone(host, port, dd2.get("hierarchyName").toString(), objThings.get(0).get("name").toString(), dd.get("thingTypeCode").toString(), "Enance", objThings.get(0).get("id").toString());
@@ -366,14 +384,16 @@ public class Sender {
                             Map messageDetailCustomer = new HashMap<>();
                             message.put("group", groupthing);
                             message.put("name", nameChild);
+                            message.put("serialNumber", nameChild);
                             message.put("thingTypeCode", thingTypeChildren);
                             message.put("udfs", messageDetail);
                             messageDetail.put("Customers",messageDetailCustomer);
                             messageDetailCustomer.put("value", thingForProced.get("name"));
                             messageDetailCustomer.put("time", TimePush);
                             System.out.println("message" + message);
-                            System.out.println("patch"+"http://"+host + ":" + port + "/riot-core-services/api/thing/" + thingForProced.get("id"));
-                            patchSomething("http://"+host + ":" + port + "/riot-core-services/api/thing/" + listThings.get(thingInZoneRandom).get("id").toString(), message);
+                            System.out.println("message2" + listThings.get(thingInZoneRandom));
+                            //System.out.println("patch"+"http://"+host + ":" + port + "/riot-core-services/api/thing/" + listThings.get(thingInZoneRandom).get("id").toString());
+                            patchSomething("http://"+host + ":" + port + "/riot-core-services/api/thing/" + listThings.get(thingInZoneRandom).get("_id").toString(), message);
                             modifyZone(host,port,groupForthing.get("hierarchyName").toString(),thingForProced.get("name").toString(),thingTypeforProced.get("thingTypeCode").toString(),es.get("code").toString(),thingForProced.get("id").toString(),TimePush);
                         } catch (Exception ex) {
                             ex.printStackTrace();
@@ -391,7 +411,26 @@ public class Sender {
                     modifyZone(host,port,groupForthing.get("hierarchyName").toString(),thingForProced.get("name").toString(),thingTypeforProced.get("thingTypeCode").toString(),es.get("code").toString(),thingForProced.get("id").toString(),TimePush);
                 }
             }
-            modifyZone(host,port,groupForthing.get("hierarchyName").toString(),thingForProced.get("name").toString(),thingTypeforProced.get("thingTypeCode").toString(),"Exxit.1",thingForProced.get("id").toString(),timeForTheLast);
+            if(probability+Math.random()>1)
+                 modifyZone(host,port,groupForthing.get("hierarchyName").toString(),thingForProced.get("name").toString(),thingTypeforProced.get("thingTypeCode").toString(),((int)(Math.random()*3)==2)?Fitting1:Fitting2,thingForProced.get("id").toString(),timeForTheLast);
+
+
+            int randomTime=(int)(Math.random()*11);
+            cal.add(Calendar.MINUTE, randomTime);
+            java.sql.Date date2 = new java.sql.Date(cal.getTime().getTime());
+            long initialTime=date2.getTime();
+            String TimePush=String.valueOf(initialTime);
+            timeForTheLast=TimePush;
+
+            if(haveProduct(thingForProced))
+            {System.out.println("entro ");
+                Map<String,Object>things2=getSomething("http://"+
+                        host+":"+port+"/riot-core-services/api/thing/?pageSize=-1&where=thingType.thingTypeCode%3D"+thingTypeCode+"&extra=thingType%2Cgroup");
+
+                List<Map<String,Object>> objThings2=(List)things.get("results");
+                modifyudfString(host,port,groupForthing.get("hierarchyName").toString(),thingForProced.get("name").toString(),thingTypeforProced.get("thingTypeCode").toString(),"Sold",thingForProced.get("id").toString(),timeForTheLast,"status");}
+
+            modifyZone(host,port,groupForthing.get("hierarchyName").toString(),thingForProced.get("name").toString(),thingTypeforProced.get("thingTypeCode").toString(),"Main.Exit",thingForProced.get("id").toString(),timeForTheLast);
 
 
         }
