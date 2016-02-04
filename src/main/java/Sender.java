@@ -247,7 +247,7 @@ public class Sender {
             messageDetailZone.put("value", zonaName);
             messageDetailZone.put("time",timePush);
 
-
+            System.out.println("Si entro");
             System.out.println(message);
             System.out.println(idThing);
             patchSomething("http://" + host + ":" + port + "/riot-core-services/api/thing/" + idThing, message);
@@ -267,8 +267,8 @@ public class Sender {
 
     }
 
-    public static boolean haveProduct(Map<String,Object>a) throws IOException {
-        Map<String,Object>group=getSomething("http://localhost:8080/riot-core-services/api/things/?where=groupId%3D8%26thingTypeCode%3Dproduct_code%26Customers.value._id%3D"+a.get("id")+"&treeView=false");
+    public static boolean haveProduct(String host,Map<String,Object>a) throws IOException {
+        Map<String,Object>group=getSomething("http://"+host+":8080/riot-core-services/api/things/?where=thingTypeCode%3Dproduct_code%26Customers.value._id%3D"+a.get("id")+"&treeView=false");
 
         List<Map<String,Object>> grou=(List)group.get("results");
         if(grou.size()>0)
@@ -279,12 +279,21 @@ public class Sender {
 
 
     }
+    public static List<Map<String,Object>> returnParent(String host,Map<String,Object>a) throws IOException {
+        Map<String,Object>group=getSomething("http://"+host+":8080/riot-core-services/api/things/?where=thingTypeCode%3Dproduct_code%26Customers.value._id%3D"+a.get("id")+"&treeView=false");
+
+        return (List)group.get("results");
+
+
+
+
+    }
 
     public static void main(String[]arg) throws IOException {
         Scanner lee=new Scanner(System.in);
-         int num_records=10;
+         int num_records=100;
          double probability=0.5;
-        String host="10.100.1.195";
+        String host="dev.riotplatform.com";
 
         String port="8080";
         String zoneExit="Main Exit";
@@ -422,13 +431,11 @@ public class Sender {
             String TimePush=String.valueOf(initialTime);
             timeForTheLast=TimePush;
 
-            if(haveProduct(thingForProced))
+            if(haveProduct(host,thingForProced))
             {System.out.println("entro ");
-                Map<String,Object>things2=getSomething("http://"+
-                        host+":"+port+"/riot-core-services/api/thing/?pageSize=-1&where=thingType.thingTypeCode%3D"+thingTypeCode+"&extra=thingType%2Cgroup");
-
-                List<Map<String,Object>> objThings2=(List)things.get("results");
-                modifyudfString(host,port,groupForthing.get("hierarchyName").toString(),thingForProced.get("name").toString(),thingTypeforProced.get("thingTypeCode").toString(),"Sold",thingForProced.get("id").toString(),timeForTheLast,"status");}
+                List<Map<String,Object>>a=returnParent(host,thingForProced);
+                for(int k=0;k<a.size();k++){
+                modifyudfString(host,port,groupForthing.get("hierarchyName").toString(),a.get(k).get("serialNumber").toString(),a.get(k).get("thingTypeCode").toString(),"Sold",a.get(k).get("_id").toString(),timeForTheLast,"Status");}}
 
             modifyZone(host,port,groupForthing.get("hierarchyName").toString(),thingForProced.get("name").toString(),thingTypeforProced.get("thingTypeCode").toString(),"Main.Exit",thingForProced.get("id").toString(),timeForTheLast);
 
