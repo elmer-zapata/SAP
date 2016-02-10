@@ -1,7 +1,6 @@
 /**
- * Created by ezapata on 28-Jan-16.
+ * Created by Elmer on 05/02/2016.
  */
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
@@ -10,10 +9,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.*;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -41,7 +37,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
-public class SenderZones {
+
+public class DeleteZones {
 
     static DefaultHttpClient client;
     static {
@@ -128,7 +125,7 @@ public class SenderZones {
             errorMessage = "Empty Response from SAP";
         }
 
-       // List<Map<String,Object>> objlist=(List)finalResult.get("results");
+        // List<Map<String,Object>> objlist=(List)finalResult.get("results");
         //Map<String,Object> es=objlist.get(0);
         //  System.out.print(es.get("zonePoints"));
         return finalResult;
@@ -194,6 +191,62 @@ public class SenderZones {
 
     }
 
+    public static void deleteSomething(String endpoint) throws IOException {
+
+
+        HttpClient client = HttpClientBuilder.create().build();
+        HttpDelete request=new HttpDelete(endpoint);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        // add request header
+        // request.addHeader("User-Agent", USER_AGENT);
+        request.addHeader("content-type", "application/json");
+        request.addHeader("Api_key","root");
+        String jsonBody="";
+
+
+
+
+
+        HttpResponse response = client.execute(request);
+        Map finalResult = null;
+        boolean error = false;
+        String errorMessage = null;
+        System.out.println("Response Code : "
+                + response.getStatusLine().getStatusCode());
+        HttpEntity entity = response.getEntity();
+        StringBuffer responseStringBuffer = new StringBuffer();
+        if (entity != null && entity.getContent() != null) {
+            BufferedReader in = new BufferedReader(new InputStreamReader(entity.getContent()));
+            String inputLine;
+            while ((inputLine = in.readLine()) != null) {
+                responseStringBuffer.append(inputLine);
+            }
+            in.close();
+        }
+        String responseString = responseStringBuffer.toString();
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (StringUtils.isNotBlank(responseString)) {
+            Map<String, Object> mapResult = new HashMap<String, Object>();
+            try {
+                mapResult = objectMapper.readValue(responseString, HashMap.class);
+                //        System.out.print("entro");
+                finalResult = mapResult;
+
+
+            } catch (Exception ex) {
+                error = true;
+                errorMessage = ex.getMessage();
+            }
+        }  else {
+            error = true;
+            errorMessage = "Empty Response from SAP";
+        }
+
+     //   List<Map<String,Object>> objlist=(List)finalResult.get("results");
+
+
+    }
 
     public static void postSomething(String endpoint,Map message) throws IOException {
 
@@ -251,7 +304,7 @@ public class SenderZones {
             errorMessage = "Empty Response from SAP";
         }
 
-       // List<Map<String,Object>> objlist=(List)finalResult.get("results");
+        // List<Map<String,Object>> objlist=(List)finalResult.get("results");
 
 
     }
@@ -304,7 +357,7 @@ public class SenderZones {
     public static void migrateZones(String hostGet,String portGet,String hostPut,String portPut,String idFacilityMap,String groupForSearch) throws IOException {
         Map<String,Object>zones=getSomething(hostGet+":"+portGet+"/riot-core-services/api/zone/?pageSize=-1&where=localMap.id%3D"+idFacilityMap+"&extra=localMap%2Cgroup%2CzoneGroup%2CzoneType");
         System.out.print(hostGet+":"+portGet+"/riot-core-services/api/zone/?pageSize=1&where=localMap.id%3D"+idFacilityMap);
-        Map<String,Object>zoneType=getSomething(hostPut+":8080/riot-core-services/api/zoneType/?where=id%3D46");
+        Map<String,Object>zoneType=getSomething(hostPut+":8080/riot-core-services/api/zoneType/");
 
         String idGroup=getSomeValueGroup(groupForSearch,hostPut,portPut,"id");
         Map<String,Object>zoneGroup=getSomething(hostPut+":8080/riot-core-services/api/zoneGroup/?where=group.id%3D"+idGroup);
@@ -354,6 +407,28 @@ public class SenderZones {
         }
 
     }
+
+
+    public static void deleteZones(String hostGet,String portGet,String hostPut,String portPut,String idFacilityMap,String groupForSearch) throws IOException {
+        Map<String,Object>zones=getSomething(hostGet+":"+portGet+"/riot-core-services/api/zone/?pageSize=-1&where=localMap.id%3D"+idFacilityMap+"&extra=localMap%2Cgroup%2CzoneGroup%2CzoneType");
+        System.out.print(hostGet+":"+portGet+"/riot-core-services/api/zone/?pageSize=1&where=localMap.id%3D"+idFacilityMap);
+
+        List<Map<String,Object>>listZone=(List)zones.get("results");
+        //System.out.print(zones);
+        for (int i=0;i<listZone.size();i++){
+            String code=listZone.get(i).get("code").toString();
+            System.out.println("codez"+code);
+            Map<String,Object> zoneForDelete=getSomething(hostPut+":8080/riot-core-services/api/zone/?where=code%3D"+code);
+            List<Map<String,Object>> zfd=(List)zoneForDelete.get("results");
+            System.out.println(zfd);
+            if(zfd.size()>0)
+            {String idForDelete=zfd.get(0).get("id").toString();
+            deleteSomething(hostPut+":8080/riot-core-services/api/zone/"+idForDelete);}
+
+
+        }
+
+    }
     public static void main(String[]arg) throws IOException {
         Scanner lee=new Scanner(System.in);
         int num_records=100;
@@ -367,17 +442,12 @@ public class SenderZones {
         String idFacilityMap="56";
         long current =System.currentTimeMillis();
 
-        migrateZones("http://saturn.mojix.com","8080","http://"+host,"8080",idFacilityMap,"Retail.Main.Store");
+        deleteZones("http://saturn.mojix.com", "8080", "http://" + host, "8080", idFacilityMap, "Retail.Main.Store");
 
 
         //List<Map<String,Object>> objZones=(List)zones.get("results");
 
 
-
-
-
-
-
     }
-}
 
+}

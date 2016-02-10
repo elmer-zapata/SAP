@@ -316,8 +316,8 @@ public class Sender {
         System.out.println("Type the thingTypeCode");
         thingTypeCode=lee.nextLine();*/
        long current =System.currentTimeMillis();
-        // get things different
-        Map<String,Object>zones=getSomething("http://"+host+":"+port+"/riot-core-services/api/zone/?pageSize=-1&where=!(name%3D"+zoneIn+")%26!(name%3D"+zoneExit+")");
+        // get things different localMap.id%3D3
+        Map<String,Object>zones=getSomething("http://"+host+":"+port+"/riot-core-services/api/zone/?pageSize=-1&where=!(name%3D"+zoneIn+")%26!(name%3D"+zoneExit+")%26localMap.id%3D56");
         //Map<String,Object>zonesFitting=getSomething("http://"+host+":"+port+"/riot-core-services/api/zone/?pageSize=-1&where=!(name%3D"+zoneIn+")%26!(name%3D"+zoneExit+")");
 
         Map<String,Object>things=getSomething("http://"+
