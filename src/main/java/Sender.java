@@ -218,7 +218,7 @@ public class Sender {
             Map messageDetailZone = new HashMap<>();
             message.put("group", group);
             message.put("name", name);
-            message.put("serialNumber", name);
+            message.put("serialNumber", name.replace(" ","."));
             message.put("thingTypeCode", thingTypeCode);
             message.put("udfs", messageDetail);
             messageDetail.put("zone", messageDetailZone);
@@ -288,12 +288,16 @@ public class Sender {
 
 
     }
+    public static void main(String[]arg) {
 
+        modifyZone("10.100.1.195", "8080", ">ViZix.retail>Retail.Main.Store", "Tag104", "retail.RFID.tag", "Accesories", "530", String.valueOf(System.currentTimeMillis()));
+    }
+/*
     public static void main(String[]arg) throws IOException {
         Scanner lee=new Scanner(System.in);
          int num_records=100;
          double probability=0.5;
-        String host="dev.riotplatform.com";
+        String host="qa.riotplatform.com";
 
         String port="8080";
         String zoneExit="Main Exit";
@@ -305,19 +309,10 @@ public class Sender {
         String Fitting1="Fitting.Room.1";
         String Fitting2="Fitting.Room.2";
 
-       /* System.out.println("Ingrese el host");
-        host=lee.nextLine();
-        System.out.println("Ingrese el puerto");
-        port=lee.nextLine();
-        System.out.println("Type the In Zone");
-        zoneIn=lee.nextLine();
-        System.out.println("Type the out Zone");
-        zoneExit=lee.nextLine();
-        System.out.println("Type the thingTypeCode");
-        thingTypeCode=lee.nextLine();*/
        long current =System.currentTimeMillis();
         // get things different localMap.id%3D3
-        Map<String,Object>zones=getSomething("http://"+host+":"+port+"/riot-core-services/api/zone/?pageSize=-1&where=!(name%3D"+zoneIn+")%26!(name%3D"+zoneExit+")%26localMap.id%3D56");
+        //Map<String,Object>zones=getSomething("http://"+host+":"+port+"/riot-core-services/api/zone/?pageSize=-1&where=!(name%3D"+zoneIn+")%26!(name%3D"+zoneExit+")%26!(name%3D"+Fitting1+")%26!(name%3D"+Fitting2+")%26localMap.id%3D57");
+        Map<String,Object>zones=getSomething("http://"+host+":"+port+"/riot-core-services/api/zone/?pageSize=-1&where=!(name%3D"+zoneIn+")%26!(name%3D"+zoneExit+")%26!(name%3D"+Fitting1+")%26!(name%3D"+Fitting2+")%26localMap.id%3D2");
         //Map<String,Object>zonesFitting=getSomething("http://"+host+":"+port+"/riot-core-services/api/zone/?pageSize=-1&where=!(name%3D"+zoneIn+")%26!(name%3D"+zoneExit+")");
 
         Map<String,Object>things=getSomething("http://"+
@@ -336,7 +331,7 @@ public class Sender {
 
 
 
-        System.out.print("tamadasf"+objThingsR.size());
+        System.out.print("tamadasf"+objThingsR.size()+"size"+objZones.size());
         for (int k=0;k<objThingsR.size();k++){
             System.out.print("modifyZone");
             modifyZone(host, port, ">ViZix.retail>Retail.Main.Store", objThingsR.get(k).get("name").toString(), "retail.RFID.tag", objZones.get((int) (Math.random()*objZones.size())).get("code").toString(), objThingsR.get(k).get("id").toString(), String.valueOf(System.currentTimeMillis()));
@@ -374,13 +369,18 @@ public class Sender {
                 //aqui hacer el update del thing si es q la probabilidad nos deja
                 String TimePush=String.valueOf(initialTime);
                 timeForTheLast=TimePush;
-                Map<String,Object> thingsInZones=getSomething("http://"+host+":"+port+""+"/riot-core-services/api/things/?pageSize=-1&where=children.zone.value.name%3D"+es.get("name").toString().replace(" ","%20")+"&treeView=false");
+                Map<String,Object> thingsInZones=getSomething("http://"+host+":"+port+""+"/riot-core-services/api/things/?pageSize=-1&where=children.zone.value.name%3D"+es.get("name").toString().replace(" ","%20")+"%26Status.value%3C%3ESold&treeView=false");
+                System.out.println("el tamaño de thingsInzone"+thingsInZones.size());
+
                 List<Map<String,Object>> listThings=(List)thingsInZones.get("results");
+                System.out.println("el tamaño de thingsInzoneeeeeeeee"+listThings.size());
                 if(listThings.size()>0) {
+                    System.out.println("entroasdfsdfasffghjk");
                     int thingInZoneRandom=(int)(Math.random()*listThings.size());
                     //Map<String,Object>children=(Map)listThings.get(thingInZoneRandom).get("children");
                     String thingTypeChildren=listThings.get(thingInZoneRandom).get("thingTypeCode").toString();
                     String nameChild=listThings.get(thingInZoneRandom).get("name").toString();
+                   // String serialChild=listThings.get(thingInZoneRandom).get("serialNumber").toString();
 
                    // System.out.print(listThings.get(thingInZoneRandom).get("groupId"));
 
@@ -393,11 +393,11 @@ public class Sender {
                             Map messageDetailCustomer = new HashMap<>();
                             message.put("group", groupthing);
                             message.put("name", nameChild);
-                            message.put("serialNumber", nameChild);
+                            message.put("serialNumber", nameChild.replace(" ","."));
                             message.put("thingTypeCode", thingTypeChildren);
                             message.put("udfs", messageDetail);
                             messageDetail.put("Customers",messageDetailCustomer);
-                            messageDetailCustomer.put("value", thingForProced.get("name"));
+                            messageDetailCustomer.put("value", thingForProced.get("name").toString().replace(" ","."));
                             messageDetailCustomer.put("time", TimePush);
                             System.out.println("message" + message);
                             System.out.println("message2" + listThings.get(thingInZoneRandom));
@@ -435,12 +435,13 @@ public class Sender {
             {System.out.println("entro ");
                 List<Map<String,Object>>a=returnParent(host,thingForProced);
                 for(int k=0;k<a.size();k++){
-                modifyudfString(host,port,groupForthing.get("hierarchyName").toString(),a.get(k).get("serialNumber").toString(),a.get(k).get("thingTypeCode").toString(),"Sold",a.get(k).get("_id").toString(),timeForTheLast,"Status");}}
+                    System.out.println("entro a modificar el status");
+                    modifyudfString(host, port, groupForthing.get("hierarchyName").toString(), a.get(k).get("serialNumber").toString(), a.get(k).get("thingTypeCode").toString(), "Sold", a.get(k).get("_id").toString(),timeForTheLast,"Status");}}
 
             modifyZone(host,port,groupForthing.get("hierarchyName").toString(),thingForProced.get("name").toString(),thingTypeforProced.get("thingTypeCode").toString(),"Main.Exit",thingForProced.get("id").toString(),timeForTheLast);
 
 
         }
 
-    }
+    }*/
 }
