@@ -288,16 +288,13 @@ public class Sender {
 
 
     }
-    public static void main(String[]arg) {
 
-        modifyZone("10.100.1.195", "8080", ">ViZix.retail>Retail.Main.Store", "Tag104", "retail.RFID.tag", "Accesories", "530", String.valueOf(System.currentTimeMillis()));
-    }
-/*
+
     public static void main(String[]arg) throws IOException {
         Scanner lee=new Scanner(System.in);
-         int num_records=100;
-         double probability=0.5;
-        String host="qa.riotplatform.com";
+         int num_records=+++++++++++200;
+         double probability=0.25;
+        String host="10.100.1.195";
 
         String port="8080";
         String zoneExit="Main Exit";
@@ -315,15 +312,20 @@ public class Sender {
         Map<String,Object>zones=getSomething("http://"+host+":"+port+"/riot-core-services/api/zone/?pageSize=-1&where=!(name%3D"+zoneIn+")%26!(name%3D"+zoneExit+")%26!(name%3D"+Fitting1+")%26!(name%3D"+Fitting2+")%26localMap.id%3D2");
         //Map<String,Object>zonesFitting=getSomething("http://"+host+":"+port+"/riot-core-services/api/zone/?pageSize=-1&where=!(name%3D"+zoneIn+")%26!(name%3D"+zoneExit+")");
 
+
+        //get de todos los customers
         Map<String,Object>things=getSomething("http://"+
                 host+":"+port+"/riot-core-services/api/thing/?pageSize=-1&where=thingType.thingTypeCode%3D"+thingTypeCode+"&extra=thingType%2Cgroup");
         //System.out.print(things);
 
         List<Map<String,Object>> objZones=(List)zones.get("results");
+
+        // lista de mapas de things customers
         List<Map<String,Object>> objThings=(List)things.get("results");
 
 
         //zones different that in or out
+        ///get de todos los tags
         Map<String,Object>thingsRfid=getSomething("http://"+
                 host+":"+port+"/riot-core-services/api/thing/?pageSize=-1&where=thingType.thingTypeCode%3Dretail.RFID.tag&extra=thingType%2Cgroup");
         List<Map<String,Object>> objThingsR=(List)thingsRfid.get("results");
@@ -332,6 +334,7 @@ public class Sender {
 
 
         System.out.print("tamadasf"+objThingsR.size()+"size"+objZones.size());
+        //manda randomicamente los productos a una zona
         for (int k=0;k<objThingsR.size();k++){
             System.out.print("modifyZone");
             modifyZone(host, port, ">ViZix.retail>Retail.Main.Store", objThingsR.get(k).get("name").toString(), "retail.RFID.tag", objZones.get((int) (Math.random()*objZones.size())).get("code").toString(), objThingsR.get(k).get("id").toString(), String.valueOf(System.currentTimeMillis()));
@@ -347,7 +350,8 @@ public class Sender {
                 Map<String,Object> thingForProced=objThings.get(i);
                 Map<String,Object> thingTypeforProced=(Map)thingForProced.get("thingType");
                 Map<String,Object> groupForthing=(Map)thingForProced.get("group");
-            int randomMoves=(int)(Math.random()*objZones.size());
+            //movimiento entre zonas
+            int randomMoves=(int)(Math.random()*9);
             Timestamp stamp = new Timestamp(current);
             java.sql.Date date = new java.sql.Date(stamp.getTime());
             Calendar cal = Calendar.getInstance();
@@ -360,7 +364,8 @@ public class Sender {
                 //sacar una zona a la suerte
 
                 Map<String,Object> es=objZones.get(randomZone);
-                int randomTime=(int)(Math.random()*11);
+                //cambiar el random de tiempo
+                int randomTime=10+(int)(Math.random()*40);
                 cal.add(Calendar.MINUTE, randomTime);
                 java.sql.Date date2 = new java.sql.Date(cal.getTime().getTime());
 
@@ -369,6 +374,7 @@ public class Sender {
                 //aqui hacer el update del thing si es q la probabilidad nos deja
                 String TimePush=String.valueOf(initialTime);
                 timeForTheLast=TimePush;
+                //get para calcular los things dentro de la zona q se movio el customer
                 Map<String,Object> thingsInZones=getSomething("http://"+host+":"+port+""+"/riot-core-services/api/things/?pageSize=-1&where=children.zone.value.name%3D"+es.get("name").toString().replace(" ","%20")+"%26Status.value%3C%3ESold&treeView=false");
                 System.out.println("el tamaño de thingsInzone"+thingsInZones.size());
 
@@ -385,7 +391,7 @@ public class Sender {
                    // System.out.print(listThings.get(thingInZoneRandom).get("groupId"));
 
                     String groupthing=groupThing(listThings.get(thingInZoneRandom).get("groupId").toString(),host,port);
-
+                    ///cambiar la formula de la probabilidad
                     if(probability+Math.random()>1) {
                         try {
                             Map message = new HashMap<>();
@@ -404,11 +410,13 @@ public class Sender {
                             //System.out.println("patch"+"http://"+host + ":" + port + "/riot-core-services/api/thing/" + listThings.get(thingInZoneRandom).get("id").toString());
                             patchSomething("http://"+host + ":" + port + "/riot-core-services/api/thing/" + listThings.get(thingInZoneRandom).get("_id").toString(), message);
                             modifyZone(host,port,groupForthing.get("hierarchyName").toString(),thingForProced.get("name").toString(),thingTypeforProced.get("thingTypeCode").toString(),es.get("code").toString(),thingForProced.get("id").toString(),TimePush);
+                            //modificar la zona de todos los productos asociados al customer
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }
                     }else{
                         try {
+                            //modificar la zona de todos los productos asociados al customer
                             modifyZone(host,port,groupForthing.get("hierarchyName").toString(),thingForProced.get("name").toString(),thingTypeforProced.get("thingTypeCode").toString(),es.get("code").toString(),thingForProced.get("id").toString(),TimePush);
                         } catch (Exception ex) {
                             ex.printStackTrace();
@@ -420,6 +428,7 @@ public class Sender {
                     modifyZone(host,port,groupForthing.get("hierarchyName").toString(),thingForProced.get("name").toString(),thingTypeforProced.get("thingTypeCode").toString(),es.get("code").toString(),thingForProced.get("id").toString(),TimePush);
                 }
             }
+            ///probabildad de q vaya a los vestidores y desacioar algunos
             if(probability+Math.random()>1)
                  modifyZone(host,port,groupForthing.get("hierarchyName").toString(),thingForProced.get("name").toString(),thingTypeforProced.get("thingTypeCode").toString(),((int)(Math.random()*3)==2)?Fitting1:Fitting2,thingForProced.get("id").toString(),timeForTheLast);
 
@@ -443,5 +452,5 @@ public class Sender {
 
         }
 
-    }*/
+    }
 }

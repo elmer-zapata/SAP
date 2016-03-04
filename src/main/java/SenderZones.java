@@ -304,9 +304,13 @@ public class SenderZones {
     public static void migrateZones(String hostGet,String portGet,String hostPut,String portPut,String idFacilityMap,String groupForSearch) throws IOException {
         Map<String,Object>zones=getSomething(hostGet+":"+portGet+"/riot-core-services/api/zone/?pageSize=-1&where=localMap.id%3D"+idFacilityMap+"&extra=localMap%2Cgroup%2CzoneGroup%2CzoneType");
         System.out.print(hostGet+":"+portGet+"/riot-core-services/api/zone/?pageSize=1&where=localMap.id%3D"+idFacilityMap);
+
+       ///trabajar en esto id hardcode
+
         Map<String,Object>zoneType=getSomething(hostPut+":8080/riot-core-services/api/zoneType/?where=id%3D2");
 
         String idGroup=getSomeValueGroup(groupForSearch,hostPut,portPut,"id");
+        System.out.println(idGroup);
         Map<String,Object>zoneGroup=getSomething(hostPut+":8080/riot-core-services/api/zoneGroup/?where=group.id%3D"+idGroup);
         System.out.print(zoneGroup);
         List<Map<String,Object>> listZoneGroup=(List)zoneGroup.get("results");
@@ -358,7 +362,7 @@ public class SenderZones {
         Scanner lee=new Scanner(System.in);
         int num_records=100;
         double probability=0.9;
-        String host="qa.riotplatform.com";
+        String host="10.100.1.195";
 
         String port="8080";
         String zoneExit="PoS";
