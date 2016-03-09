@@ -16,4 +16,19 @@ public class ListZoneTypeResponse{
     @JsonProperty("results")
     private List<ZoneType> zoneTypeList;
 
+    public int getTotal(){
+        return total;
+    }
+
+    public void setTotal(int total){
+        this.total = total;
+    }
+
+    public List<ZoneType> getZoneTypeList(){
+        return zoneTypeList;
+    }
+
+    public void setZoneTypeList(List<ZoneType> zoneTypeList){
+        this.zoneTypeList = zoneTypeList;
+    }
 }

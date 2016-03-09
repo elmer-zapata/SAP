@@ -86,14 +86,10 @@ public class Sender{
         HttpClient client = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet(endpoint);
         ObjectMapper objectMapper = new ObjectMapper();
-        // add request header
-        // request.addHeader("User-Agent", USER_AGENT);
         request.addHeader("content-type", "application/json");
         request.addHeader("Api_key", "root");
         HttpResponse response = client.execute(request);
         Map finalResult = null;
-        boolean error = false;
-        String errorMessage = null;
         System.out.println("Response Code : " + response.getStatusLine().getStatusCode());
         HttpEntity entity = response.getEntity();
         StringBuffer responseStringBuffer = new StringBuffer();
@@ -106,32 +102,15 @@ public class Sender{
             in.close();
         }
         String responseString = responseStringBuffer.toString();
-        int statusCode = response.getStatusLine().getStatusCode();
         if (StringUtils.isNotBlank(responseString)) {
-            Map<String, Object> mapResult = new HashMap<String, Object>();
+            Map<String, Object> mapResult;
             try{
                 mapResult = objectMapper.readValue(responseString, HashMap.class);
-                //List<Object> result=objectMapper.readValue(responseString,List.class);
-                //     Map aux = (Map) mapResult.get("RFIDEquipmentDetails_MT");
-                //List lis=(List)result.get("Points");
-                //System.out.print("entro");
                 finalResult = mapResult;
-
-
             }
             catch(Exception ex){
-                error = true;
-                errorMessage = ex.getMessage();
             }
         }
-        else {
-            error = true;
-            errorMessage = "Empty Response from SAP";
-        }
-
-        List<Map<String, Object>> objlist = (List)finalResult.get("results");
-        //        Map<String,Object> es=objlist.get(0);
-        //  System.out.print(es.get("zonePoints"));
         return finalResult;
     }
 
@@ -220,13 +199,12 @@ public class Sender{
             messageDetailZone.put("time", timePush);
 
 
-            System.out.println(message);
+            System.out.println("Changing zone of thing " + message);
             patchSomething("http://" + host + ":" + port + "/riot-core-services/api/thing/" + idThing, message);
         }
         catch(Exception ex){
             ex.printStackTrace();
         }
-
     }
 
     public static void modifyUdfString(String host,
@@ -272,7 +250,7 @@ public class Sender{
 
         List<Map<String, Object>> grou = (List)group.get("results");
         if (group == null) {
-            System.out.print("si");
+            System.out.println("si");
         }
         // System.out.print(group);
         return grou.get(0).get("hierarchyName").toString();
@@ -310,19 +288,24 @@ public class Sender{
     }
 
     public static void main(String[] arg) throws IOException{
-        int num_records = 200;
-        double probability = 0.25;
-        String host = "localhost";
 
+        int numRecords = 200;
+        int zoneMovMax = 9;
+        double probability = 0.25;
+        double notShippingProb = 0.50;
+
+        String host = "localhost";
         String port = "8080";
-        String zoneExit = "Main Exit";
-        String zoneIn = "Main Entrance";
-        zoneExit = zoneExit.replace(" ", "%20");
-        zoneIn = zoneIn.replace(" ", "%20");
+
         String thingTypeCode = "customer_code";
 
+        String zoneInCode = "Main.Entrance";
+        String zoneExitCode = "Main.Exit";
         String Fitting1 = "Fitting.Room.1";
         String Fitting2 = "Fitting.Room.2";
+
+        zoneInCode = zoneInCode.replace(" ", "%20");
+        zoneExitCode = zoneExitCode.replace(" ", "%20");
 
         //        long current = System.currentTimeMillis();
         // get things different localMap.id%3D3
@@ -330,18 +313,20 @@ public class Sender{
                                                  + host
                                                  + ":"
                                                  + port
-                                                 + "/riot-core-services/api/zone/?pageSize=-1&where=!(name%3D"
-                                                 + zoneIn
-                                                 + ")%26!(name%3D"
-                                                 + zoneExit
-                                                 + ")%26!(name%3D"
+                                                 + "/riot-core-services/api/zone/?"
+                                                 + "pageSize=-1&"
+                                                 + "where=!(code%3D"
+                                                 + zoneInCode
+                                                 + ")%26!(code%3D"
+                                                 + zoneExitCode
+                                                 + ")%26!(code%3D"
                                                  + Fitting1
-                                                 + ")%26!(name%3D"
+                                                 + ")%26!(code%3D"
                                                  + Fitting2
                                                  + ")%26localMap.id%3D2");
 
         //get de todos los customers
-        Map<String, Object> things = getSomething("http://"
+        Map<String, Object> customerThings = getSomething("http://"
                                                   +
                                                   host
                                                   + ":"
@@ -350,37 +335,47 @@ public class Sender{
                                                   + thingTypeCode
                                                   + "&extra=thingType%2Cgroup");
 
-        List<Map<String, Object>> objZones = (List)zones.get("results");
-
-        //Map list of thing customers
-        List<Map<String, Object>> objThings = (List)things.get("results");
-
-
-        //zones different that in or out
-        ///get de todos los tags
-        Map<String, Object> thingsRfid = getSomething("http://"
+        Map<String, Object> thingsRFID = getSomething("http://"
                                                       +
                                                       host
                                                       + ":"
                                                       + port
-                                                      + "/riot-core-services/api/thing/?pageSize=-1&where=thingType.thingTypeCode%3Dretail.RFID.tag&extra=thingType%2Cgroup");
-        List<Map<String, Object>> objThingsR = (List)thingsRfid.get("results");
+                                                      + "/riot-core-services/api/thing/?"
+                                                      + "pageSize=-1&"
+                                                      + "where=thingType.thingTypeCode%3Dretail.RFID.tag&"
+                                                      + "extra=thingType%2Cgroup");
+
+        //Map list of thing customers, zones and RFID's
+
+        List<Map<String, Object>> objCustomerThings = (List)customerThings.get("results");
+        List<Map<String, Object>> objZones = (List)zones.get("results");
+        List<Map<String, Object>> objThingsRFID = (List)thingsRFID.get("results");
 
 
-        System.out.print("tamadasf" + objThingsR.size() + "size" + objZones.size());
+        System.out.println("Number of RFID's: " + objThingsRFID.size() + " Number of Zones: " + objZones.size());
 
-        //manda randomicamente los productos a una zona
-        for(int k = 0; k < objThingsR.size(); k++){
-            System.out.print("modifyZone");
+        //set random zones to products in map
+        System.out.println("******BEGIN MODIFY ZONES**********");
+        for(int k = 0; k < objThingsRFID.size(); k++){
             modifyZone(host,
                        port,
                        ">ViZix.retail>Retail.Main.Store",
-                       objThingsR.get(k).get("name").toString(),
+                       objThingsRFID.get(k).get("name").toString(),
                        "retail.RFID.tag",
                        objZones.get((int)(Math.random() * objZones.size())).get("code").toString(),
-                       objThingsR.get(k).get("id").toString(),
+                       objThingsRFID.get(k).get("id").toString(),
                        String.valueOf(System.currentTimeMillis()));
         }
-        Simulator.Simulate(num_records, objThings, objZones, host, port, probability, Fitting1, Fitting2);
+
+        Simulator.Simulate(numRecords,
+                           objCustomerThings,
+                           objZones,
+                           host,
+                           port,
+                           probability,
+                           notShippingProb,
+                           zoneMovMax,
+                           Fitting1,
+                           Fitting2);
     }
 }

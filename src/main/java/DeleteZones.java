@@ -342,7 +342,7 @@ public class DeleteZones {
         Map<String,Object>group=getSomething("http://"+host+":"+port+"/riot-core-services/api/group/?where=id%3D"+idGroup);
 
         List<Map<String,Object>> grou=(List)group.get("results");
-        if(group==null)System.out.print("si");
+        if(group==null)System.out.println("si");
         // System.out.print(group);
         return grou.get(0).get("hierarchyName").toString();
 
@@ -356,12 +356,12 @@ public class DeleteZones {
 
     public static void migrateZones(String hostGet,String portGet,String hostPut,String portPut,String idFacilityMap,String groupForSearch) throws IOException {
         Map<String,Object>zones=getSomething(hostGet+":"+portGet+"/riot-core-services/api/zone/?pageSize=-1&where=localMap.id%3D"+idFacilityMap+"&extra=localMap%2Cgroup%2CzoneGroup%2CzoneType");
-        System.out.print(hostGet+":"+portGet+"/riot-core-services/api/zone/?pageSize=1&where=localMap.id%3D"+idFacilityMap);
+        System.out.println(hostGet+":"+portGet+"/riot-core-services/api/zone/?pageSize=1&where=localMap.id%3D"+idFacilityMap);
         Map<String,Object>zoneType=getSomething(hostPut+":8080/riot-core-services/api/zoneType/");
 
         String idGroup=getSomeValueGroup(groupForSearch,hostPut,portPut,"id");
         Map<String,Object>zoneGroup=getSomething(hostPut+":8080/riot-core-services/api/zoneGroup/?where=group.id%3D"+idGroup);
-        System.out.print(zoneGroup);
+        System.out.println(zoneGroup);
         List<Map<String,Object>> listZoneGroup=(List)zoneGroup.get("results");
         String idZG=listZoneGroup.get(0).get("id").toString();
 
@@ -377,7 +377,7 @@ public class DeleteZones {
         for (int i=0;i<listZone.size();i++){
             Map<String,Object> oneZone=listZone.get(i);
             try {
-                System.out.print("entor");
+                System.out.println("entor");
                 Map message = new HashMap<>();
                 Map messageZonePoints = new HashMap<>();
                 Map messageDetailZone = new HashMap<>();
@@ -411,7 +411,7 @@ public class DeleteZones {
 
     public static void deleteZones(String hostGet,String portGet,String hostPut,String portPut,String idFacilityMap,String groupForSearch) throws IOException {
         Map<String,Object>zones=getSomething(hostGet+":"+portGet+"/riot-core-services/api/zone/?pageSize=-1&where=localMap.id%3D"+idFacilityMap+"&extra=localMap%2Cgroup%2CzoneGroup%2CzoneType");
-        System.out.print(hostGet+":"+portGet+"/riot-core-services/api/zone/?pageSize=1&where=localMap.id%3D"+idFacilityMap);
+        System.out.println(hostGet+":"+portGet+"/riot-core-services/api/zone/?pageSize=1&where=localMap.id%3D"+idFacilityMap);
 
         List<Map<String,Object>>listZone=(List)zones.get("results");
         //System.out.print(zones);

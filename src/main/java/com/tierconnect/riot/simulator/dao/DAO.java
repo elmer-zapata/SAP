@@ -10,12 +10,15 @@ import com.tierconnect.riot.simulator.utils.HttpClientService;
 public class DAO{
 
     protected HttpClientService httpClientService;
+    protected final String END_POINT;
 
-    public DAO(){
-        httpClientService = new HttpClientService("saturn.mojix.com", 8080, "root");
+    public DAO(String endPointField){
+        END_POINT = endPointField;
+        httpClientService = new HttpClientService("saturn.mojix.com", 8080, END_POINT, "root");
     }
 
-    public DAO(String host, int port, String user){
-        httpClientService = new HttpClientService(host, port, user);
+    public DAO(String host, int port, String endPointField, String user){
+        END_POINT = endPointField;
+        httpClientService = new HttpClientService(host, port, END_POINT, user);
     }
 }

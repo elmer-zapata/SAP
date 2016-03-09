@@ -15,11 +15,13 @@ public class Simulator{
 
 
     public static void Simulate(int num_records,
-                                List<Map<String, Object>> objThings,
+                                List<Map<String, Object>> objCustomerThings,
                                 List<Map<String, Object>> objZones,
                                 String host,
                                 String port,
                                 double probability,
+                                double notShippingProb,
+                                int zoneMovMax,
                                 String Fitting1,
                                 String Fitting2){
         long current = System.currentTimeMillis();
@@ -27,13 +29,14 @@ public class Simulator{
             //***************************BEGIN SIMULATION*******************************
 
             for(int i = 0; i < num_records; i++){
-                //necesito el thing para moverlo
-                Map<String, Object> thingForProced = objThings.get(i);
-                Map<String, Object> thingTypeforProced = (Map)thingForProced.get("thingType");
-                Map<String, Object> groupForthing = (Map)thingForProced.get("group");
 
-                //movimiento entre zonas
-                int randomMoves = (int)(Math.random() * 9);
+                //get Customer, Customer Thing Type and Group
+                Map<String, Object> thingCustomer = objCustomerThings.get(i);
+                Map<String, Object> thingTypeCustomer = (Map)thingCustomer.get("thingType");
+                Map<String, Object> groupCustomer = (Map)thingCustomer.get("group");
+
+                //set Random moves between zones MAX NUMBER.
+                int randomMoves = (int)(Math.random() * zoneMovMax);
                 Timestamp stamp = new Timestamp(current);
                 java.sql.Date date = new java.sql.Date(stamp.getTime());
                 Calendar cal = Calendar.getInstance();
@@ -43,20 +46,24 @@ public class Simulator{
                 String timeForTheLast = "";
                 for(int j = 1; j <= randomMoves; j++){
                     int randomZone = (int)(Math.random() * objZones.size());
-                    //sacar una zona a la suerte
 
+                    //sacar una zona a la suerte
                     Map<String, Object> es = objZones.get(randomZone);
+
                     //cambiar el random de tiempo
-                    int randomTime = 10 + (int)(Math.random() * 3600);
-                    cal.add(Calendar.MINUTE, randomTime);
+                    int randomTime = 30 + (int)(Math.random() * 300);
+
+                    cal.add(Calendar.SECOND, randomTime);
                     java.sql.Date date2 = new java.sql.Date(cal.getTime().getTime());
 
                     //logger.info(date2);
                     long initialTime = date2.getTime();
+
                     //aqui hacer el update del thing si es q la probabilidad nos deja
                     String timePush = String.valueOf(initialTime);
                     timeForTheLast = timePush;
-                    //get para calcular los things dentro de la zona q se movio el customer
+
+                    //Get All Things in zone where the customer was moved.
                     Map<String, Object> thingsInZones = Sender.getSomething("http://"
                                                                             + host
                                                                             + ":"
@@ -68,21 +75,21 @@ public class Simulator{
                                                                                 .replace(" ", "%20")
                                                                             + "%26Status.value%3C%3ESold&treeView=false");
 
-                    System.out.println("el tamaño de thingsInzone" + thingsInZones.size());
 
                     List<Map<String, Object>> listThings = (List)thingsInZones.get("results");
-                    System.out.println("el tamaño de things in zone" + listThings.size());
+
+
                     if (listThings.size() > 0) {
-                        System.out.println("entroasdfsdfasffghjk");
+                        System.out.println("The things in zone where the customer was moved are: " + listThings.size());
+
                         int thingInZoneRandom = (int)(Math.random() * listThings.size());
-                        //Map<String,Object>children=(Map)listThings.get(thingInZoneRandom).get("children");
-                        String thingTypeChildren = listThings.get(thingInZoneRandom).get("thingTypeCode").toString();
+
+                        String thingType = listThings.get(thingInZoneRandom).get("thingTypeCode").toString();
+
                         String nameChild = listThings.get(thingInZoneRandom).get("name").toString();
-                        // String serialChild=listThings.get(thingInZoneRandom).get("serialNumber").toString();
 
-                        // System.out.print(listThings.get(thingInZoneRandom).get("groupId"));
 
-                        String groupthing = Sender.groupThing(listThings.get(thingInZoneRandom)
+                        String groupThing = Sender.groupThing(listThings.get(thingInZoneRandom)
                                                                         .get("groupId")
                                                                         .toString(), host, port);
                         ///cambiar la formula de la probabilidad
@@ -91,18 +98,18 @@ public class Simulator{
                                 Map message = new HashMap<>();
                                 Map messageDetail = new HashMap<>();
                                 Map messageDetailCustomer = new HashMap<>();
-                                message.put("group", groupthing);
+                                message.put("group", groupThing);
                                 message.put("name", nameChild);
                                 message.put("serialNumber", nameChild.replace(" ", "."));
-                                message.put("thingTypeCode", thingTypeChildren);
+                                message.put("thingTypeCode", thingType);
                                 message.put("udfs", messageDetail);
                                 messageDetail.put("Customers", messageDetailCustomer);
                                 messageDetailCustomer.put("value",
-                                                          thingForProced.get("name").toString().replace(" ", "."));
+                                                          thingCustomer.get("name").toString().replace(" ", "."));
                                 messageDetailCustomer.put("time", timePush);
                                 System.out.println("message" + message);
                                 System.out.println("message2" + listThings.get(thingInZoneRandom));
-                                //System.out.println("patch"+"http://"+host + ":" + port + "/riot-core-services/api/thing/" + listThings.get(thingInZoneRandom).get("id").toString());
+
                                 Sender.patchSomething("http://"
                                                       + host
                                                       + ":"
@@ -112,11 +119,11 @@ public class Simulator{
                                                       message);
                                 Sender.modifyZone(host,
                                                   port,
-                                                  groupForthing.get("hierarchyName").toString(),
-                                                  thingForProced.get("name").toString(),
-                                                  thingTypeforProced.get("thingTypeCode").toString(),
+                                                  groupCustomer.get("hierarchyName").toString(),
+                                                  thingCustomer.get("name").toString(),
+                                                  thingTypeCustomer.get("thingTypeCode").toString(),
                                                   es.get("code").toString(),
-                                                  thingForProced.get("id").toString(),
+                                                  thingCustomer.get("id").toString(),
                                                   timePush);
                                 //modificar la zona de todos los productos asociados al customer
                             }
@@ -129,11 +136,11 @@ public class Simulator{
                                 //modificar la zona de todos los productos asociados al customer
                                 Sender.modifyZone(host,
                                                   port,
-                                                  groupForthing.get("hierarchyName").toString(),
-                                                  thingForProced.get("name").toString(),
-                                                  thingTypeforProced.get("thingTypeCode").toString(),
+                                                  groupCustomer.get("hierarchyName").toString(),
+                                                  thingCustomer.get("name").toString(),
+                                                  thingTypeCustomer.get("thingTypeCode").toString(),
                                                   es.get("code").toString(),
-                                                  thingForProced.get("id").toString(),
+                                                  thingCustomer.get("id").toString(),
                                                   timePush);
                             }
                             catch(Exception ex){
@@ -145,23 +152,25 @@ public class Simulator{
                     else {
                         Sender.modifyZone(host,
                                           port,
-                                          groupForthing.get("hierarchyName").toString(),
-                                          thingForProced.get("name").toString(),
-                                          thingTypeforProced.get("thingTypeCode").toString(),
+                                          groupCustomer.get("hierarchyName").toString(),
+                                          thingCustomer.get("name").toString(),
+                                          thingTypeCustomer.get("thingTypeCode").toString(),
                                           es.get("code").toString(),
-                                          thingForProced.get("id").toString(),
+                                          thingCustomer.get("id").toString(),
                                           timePush);
                     }
                 }
-                ///probabildad de q vaya a los vestidores y desacioar algunos
-                if (probability + Math.random() > 1) {
+
+
+                ///probabildad de q vaya a los vestidores y no compre todo algunos
+                if (notShippingProb + Math.random() > 1) {
                     Sender.modifyZone(host,
                                       port,
-                                      groupForthing.get("hierarchyName").toString(),
-                                      thingForProced.get("name").toString(),
-                                      thingTypeforProced.get("thingTypeCode").toString(),
+                                      groupCustomer.get("hierarchyName").toString(),
+                                      thingCustomer.get("name").toString(),
+                                      thingTypeCustomer.get("thingTypeCode").toString(),
                                       ((int)(Math.random() * 3) == 2)?Fitting1:Fitting2,
-                                      thingForProced.get("id").toString(),
+                                      thingCustomer.get("id").toString(),
                                       timeForTheLast);
                 }
 
@@ -172,14 +181,14 @@ public class Simulator{
                 long initialTime = date2.getTime();
                 timeForTheLast = String.valueOf(initialTime);
 
-                if (Sender.haveProduct(host, thingForProced)) {
+                if (Sender.haveProduct(host, thingCustomer)) {
                     System.out.println("entro ");
-                    List<Map<String, Object>> a = Sender.returnParent(host, thingForProced);
+                    List<Map<String, Object>> a = Sender.returnParent(host, thingCustomer);
                     for(int k = 0; k < a.size(); k++){
                         System.out.println("entro a modificar el status");
                         Sender.modifyUdfString(host,
                                                port,
-                                               groupForthing.get("hierarchyName").toString(),
+                                               groupCustomer.get("hierarchyName").toString(),
                                                a.get(k).get("serialNumber").toString(),
                                                a.get(k).get("thingTypeCode").toString(),
                                                "Sold",
@@ -191,18 +200,18 @@ public class Simulator{
 
                 Sender.modifyZone(host,
                                   port,
-                                  groupForthing.get("hierarchyName").toString(),
-                                  thingForProced.get("name").toString(),
-                                  thingTypeforProced.get("thingTypeCode").toString(),
+                                  groupCustomer.get("hierarchyName").toString(),
+                                  thingCustomer.get("name").toString(),
+                                  thingTypeCustomer.get("thingTypeCode").toString(),
                                   "Main.Exit",
-                                  thingForProced.get("id").toString(),
+                                  thingCustomer.get("id").toString(),
                                   timeForTheLast);
 
 
             }
         }
         catch(Exception ex){
-            System.out.print("ERROR: " + ex);
+            System.out.println("ERROR: " + ex);
         }
     }
 }

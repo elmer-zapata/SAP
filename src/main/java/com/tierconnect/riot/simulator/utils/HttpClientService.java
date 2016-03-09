@@ -3,6 +3,7 @@ package com.tierconnect.riot.simulator.utils;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.client.HttpClient;
@@ -28,10 +29,10 @@ public class HttpClientService{
 
     private HttpClient httpClient;
     private final String USER_SERVICE;
-    HttpRequestBase request;
-    URIBuilder builder;
+    private HttpRequestBase request;
+    private URIBuilder builder;
 
-    public HttpClientService(String host, int port, String userService){
+    public HttpClientService(String host, int port, String endpoint, String userService){
 
         httpClient = HttpClientBuilder.create().build();
         request = null;
@@ -40,15 +41,12 @@ public class HttpClientService{
         builder.setHost(host);
         builder.setScheme("http");
         builder.setPort(port);
+        builder.setPath(endpoint);
     }
 
 
-    public Object httpRequest(String endpoint,
-                              List<NameValuePair> params,
-                              String method,
-                              Object objectInput,
-                              Class classresponse) throws IOException, URISyntaxException{
-        builder.setPath(endpoint);
+    public Object httpRequest(List<NameValuePair> params, String method, Object objectInput, Class classresponse)
+    throws IOException, URISyntaxException{
         if (params != null) {
             for(NameValuePair nameValuePair : params){
                 builder.setParameter(nameValuePair.getName(), nameValuePair.getValue());
@@ -67,6 +65,13 @@ public class HttpClientService{
                     ((HttpPost)request).setEntity(jsonEntity);
                 }
                 break;
+            case "PUT":
+                request = new HttpPut(uri);
+                if (objectInput != null) {
+                    StringEntity jsonEntity = new StringEntity(JSonConverter.objectToJsonString(objectInput));
+                    ((HttpPut)request).setEntity(jsonEntity);
+                }
+                break;
         }
 
         HttpResponse response;
@@ -78,11 +83,13 @@ public class HttpClientService{
             HttpEntity entity = response.getEntity();
 
             if (entity != null) {
-                if (response.getStatusLine().getStatusCode() == 200) {
+                if (response.getStatusLine().getStatusCode() == 200
+                    || response.getStatusLine().getStatusCode() == 201) {
                     // A Simple JSON Response Read
                     InputStream inputStream = entity.getContent();
                     result = JSonConverter.jsonStringToObject(HttpResponseConverter.convertStreamToString(inputStream),
                                                               classresponse);
+                    inputStream.close();
                 }
 
             }

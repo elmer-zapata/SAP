@@ -306,7 +306,7 @@ public class SenderZones{
 
         List<Map<String, Object>> grou = (List)group.get("results");
         if (group == null) {
-            System.out.print("si");
+            System.out.println("si");
         }
         // System.out.print(group);
         return grou.get(0).get("hierarchyName").toString();
@@ -331,7 +331,7 @@ public class SenderZones{
                                                  + "/riot-core-services/api/zone/?pageSize=-1&where=localMap.id%3D"
                                                  + idFacilityMap
                                                  + "&extra=localMap%2Cgroup%2CzoneGroup%2CzoneType");
-        System.out.print(hostGet
+        System.out.println(hostGet
                          + ":"
                          + portGet
                          + "/riot-core-services/api/zone/?pageSize=1&where=localMap.id%3D"
@@ -346,7 +346,7 @@ public class SenderZones{
         Map<String, Object> zoneGroup = getSomething(hostPut
                                                      + ":8080/riot-core-services/api/zoneGroup/?where=group.id%3D"
                                                      + idGroup);
-        System.out.print(zoneGroup);
+        System.out.println(zoneGroup);
         List<Map<String, Object>> listZoneGroup = (List)zoneGroup.get("results");
         String idZG = listZoneGroup.get(0).get("id").toString();
 
@@ -363,7 +363,7 @@ public class SenderZones{
         for(int i = 0; i < listZone.size(); i++){
             Map<String, Object> oneZone = listZone.get(i);
             try{
-                System.out.print("entor");
+                System.out.println("entor");
                 Map message = new HashMap<>();
                 Map messageZonePoints = new HashMap<>();
                 Map messageDetailZone = new HashMap<>();
@@ -403,7 +403,7 @@ public class SenderZones{
             migrateZones("http://saturn.mojix.com", port, "http://" + host, port, idFacilityMap, "Retail.Main.Store");
         }
         catch(Exception ex){
-            System.out.print("ERROR: " + ex);
+            System.out.println("ERROR: " + ex);
         }
     }
 }
