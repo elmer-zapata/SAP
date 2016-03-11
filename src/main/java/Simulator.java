@@ -8,8 +8,7 @@ import java.util.*;
 public class Simulator{
 
 
-    public static void Simulate(int num_records,
-                                List<Map<String, Object>> objCustomerThings,
+    public static void Simulate(List<Map<String, Object>> objCustomerThings,
                                 List<Map<String, Object>> objZones,
                                 String host,
                                 String port,
@@ -21,12 +20,15 @@ public class Simulator{
                                 int maxTimeInZoneSec,
                                 String zoneExitCode,
                                 String Fitting1,
-                                String Fitting2){
-        long current = System.currentTimeMillis();
+                                String Fitting2,
+                                int simulationHours,
+                                int clientIntervalSec){
         try{
             //***************************BEGIN SIMULATION*******************************
+            int minClientInterval = ((simulationHours * 3600) / objCustomerThings.size()) - clientIntervalSec;
+            int maxClientInterval = ((simulationHours * 3600) / objCustomerThings.size()) + clientIntervalSec;
 
-            for(int i = 0; i < num_records; i++){
+            for(int i = 0; i < objCustomerThings.size(); i++){
 
                 //get Customer, Customer Thing Type and Group
                 Map<String, Object> thingCustomer = objCustomerThings.get(i);
@@ -35,25 +37,18 @@ public class Simulator{
 
                 //set Random moves between zones with MAX NUMBER and MIN NUMBER.
                 int randomMoves = (int)(Math.random() * zoneMovMax);
-
-                Timestamp stamp = new Timestamp(current);
-                java.sql.Date date = new java.sql.Date(stamp.getTime());
                 Calendar calendar = Calendar.getInstance();
-                calendar.setTime(date);
 
                 ArrayList<Map<String, Object>> listShippingProducts = new ArrayList<>();
 
-                int x = 0;
                 for(int j = 1; j <= randomMoves; j++){
-
 
                     //get random zone
                     //Posible error:  REPEATED ZONE, it must have a control to random number  in zones.
                     Map<String, Object> zoneRandom = objZones.get((int)(Math.random() * objZones.size()));
 
-
                     //Set random Time in zone with min time in zone and max time in zone.
-                    String timePush = timeRandomIncrement(calendar, minTimeInZoneSec, maxTimeInZoneSec,  x);
+                    String timePush = timeRandomIncrement(calendar, minTimeInZoneSec, maxTimeInZoneSec);
 
                     UpdateClientZone(host,
                                      port,
@@ -67,8 +62,8 @@ public class Simulator{
                                      listShippingProducts);
 
                     // Get All Things in zone where the customer was moved.
-                    // Services not Found End point Thing to children.zone.value.name
-                    // it used Things end point.
+                    // Services not Found End point "Thing" to children.zone.value.name
+                    // it used "Things" end point.
                     Map productInZone = Sender.getSomething("http://"
                                                             + host
                                                             + ":"
@@ -140,7 +135,7 @@ public class Simulator{
                                      thingTypeCustomer.get("thingTypeCode").toString(),
                                      fitting,
                                      thingCustomer.get("id").toString(),
-                                     timeRandomIncrement(calendar, minTimeInZoneSec, maxTimeInZoneSec,x),
+                                     timeRandomIncrement(calendar, minTimeInZoneSec, maxTimeInZoneSec),
                                      listShippingProducts);
 
                 }
@@ -148,12 +143,14 @@ public class Simulator{
                 purchaseProductProv(host,
                                     port,
                                     zoneExitCode,
-                                    timeRandomIncrement(calendar, minTimeInZoneSec, maxTimeInZoneSec,x),
+                                    timeRandomIncrement(calendar, minTimeInZoneSec, maxTimeInZoneSec),
                                     purchaseProb,
                                     listShippingProducts,
                                     groupCustomerHierarchyName,
                                     thingCustomer,
                                     thingTypeCustomer);
+
+                timeRandomIncrement(calendar, minClientInterval, maxClientInterval);
             }
         }
         catch(Exception ex){
@@ -293,13 +290,9 @@ public class Simulator{
         }
     }
 
-    public static String timeRandomIncrement(Calendar calendar, int minTimeInZoneSec, int maxTimeInZoneSec, int x){
+    public static String timeRandomIncrement(Calendar calendar, int minTimeInZoneSec, int maxTimeInZoneSec){
         int randomTime = minTimeInZoneSec + (int)(Math.random() * maxTimeInZoneSec);
         calendar.add(Calendar.SECOND, randomTime);
-        java.sql.Date date = new java.sql.Date(calendar.getTime().getTime());
-        long initialTime = date.getTime();
-        x = x+1;
-        System.out.println("x: " + x);
-        return String.valueOf(initialTime);
+        return String.valueOf(calendar.getTime().getTime());
     }
 }

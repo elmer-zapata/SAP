@@ -265,6 +265,8 @@ public class Sender{
         int clientZoneMovMax = 9;
         int minTimeInZoneSec = 30;
         int maxTimeInZoneSec = 300;
+        int simulationHours = 12;
+        int clientIntervalSec = 30;
 
         //probability shipping product and no shipping
         double shippingProb = 0.25;
@@ -345,8 +347,7 @@ public class Sender{
                        null);
         }
 
-        Simulator.Simulate(numRecords,
-                           objCustomerThings,
+        Simulator.Simulate(objCustomerThings,
                            objZones,
                            host,
                            port,
@@ -358,6 +359,8 @@ public class Sender{
                            maxTimeInZoneSec,
                            zoneExitCode,
                            Fitting1,
-                           Fitting2);
+                           Fitting2,
+                           simulationHours,
+                           clientIntervalSec);
     }
 }
