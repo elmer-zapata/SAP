@@ -40,7 +40,7 @@ public class CVSReader{
                     continue;
                 }
                 if (! line.equals("")) {
-                    String[] arrayStringLine = line.split(cvsSplitBy);
+                    String[] arrayStringLine = line.split((cvsSplitBy.equals(""))?",":cvsSplitBy);
                     parseFile.add(arrayStringLine);
                 }
             }
@@ -59,6 +59,5 @@ public class CVSReader{
             }
         }
         return parseFile;
-
     }
 }

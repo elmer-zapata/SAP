@@ -1,37 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/src/test/java/com/tierconnect/riot/simulator/test/unit_test/utils/CVSReaderTest.groovy" line="27" mnemonic="0" />
+    <bookmark url="file://$PROJECT_DIR$/src/test/java/com/tierconnect/riot/simulator/test/unit_test/utils/CVSReaderTest.groovy" line="26" mnemonic="0" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b415db0b-2c10-4694-b914-fbca8a18cfde" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/resources/test/csv/customHeaderEmptyAndSpaces.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/resources/test/csv/customers.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/resources/test/csv/customersWithSpaces.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/resources/csv/customHeaderEmptyAndSpaces.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/resources/csv/customers.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/resources/csv/customersWithSpaces.csv" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/test/java/resources/csv/FMC.csv" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/test/java/resources/csv/customer.csv" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.11/taskArtifacts/cache.properties.lock" afterPath="$PROJECT_DIR$/.gradle/2.11/taskArtifacts/cache.properties.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.11/taskArtifacts/fileHashes.bin" afterPath="$PROJECT_DIR$/.gradle/2.11/taskArtifacts/fileHashes.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.11/taskArtifacts/fileSnapshots.bin" afterPath="$PROJECT_DIR$/.gradle/2.11/taskArtifacts/fileSnapshots.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.11/taskArtifacts/outputFileStates.bin" afterPath="$PROJECT_DIR$/.gradle/2.11/taskArtifacts/outputFileStates.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.11/taskArtifacts/taskArtifacts.bin" afterPath="$PROJECT_DIR$/.gradle/2.11/taskArtifacts/taskArtifacts.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/main/DeleteZones.class" afterPath="$PROJECT_DIR$/build/classes/main/DeleteZones.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/main/Sender.class" afterPath="$PROJECT_DIR$/build/classes/main/Sender.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/main/SenderZones.class" afterPath="$PROJECT_DIR$/build/classes/main/SenderZones.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/main/Simulator.class" afterPath="$PROJECT_DIR$/build/classes/main/Simulator.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/resources/csv/customersSeparator-.csv" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/main/com/tierconnect/riot/simulator/utils/CVSReader.class" afterPath="$PROJECT_DIR$/build/classes/main/com/tierconnect/riot/simulator/utils/CVSReader.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/test/com/tierconnect/riot/simulator/test/unit_test/utils/CVSReaderTest.class" afterPath="$PROJECT_DIR$/build/classes/test/com/tierconnect/riot/simulator/test/unit_test/utils/CVSReaderTest.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/distributions/FMCSAP.tar" afterPath="$PROJECT_DIR$/build/distributions/FMCSAP.tar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/distributions/FMCSAP.zip" afterPath="$PROJECT_DIR$/build/distributions/FMCSAP.zip" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/libs/FMCSAP.jar" afterPath="$PROJECT_DIR$/build/libs/FMCSAP.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/DeleteZones.java" afterPath="$PROJECT_DIR$/src/main/java/DeleteZones.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/Sender.java" afterPath="$PROJECT_DIR$/src/main/java/Sender.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/SenderZones.java" afterPath="$PROJECT_DIR$/src/main/java/SenderZones.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/Simulator.java" afterPath="$PROJECT_DIR$/src/main/java/Simulator.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/tierconnect/riot/simulator/utils/CVSReader.java" afterPath="$PROJECT_DIR$/src/main/java/com/tierconnect/riot/simulator/utils/CVSReader.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/com/tierconnect/riot/simulator/test/unit_test/utils/CVSReaderTest.groovy" afterPath="$PROJECT_DIR$/src/test/java/com/tierconnect/riot/simulator/test/unit_test/utils/CVSReaderTest.groovy" />
     </list>
@@ -102,20 +79,59 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/com/tierconnect/riot/simulator/utils/CVSReader.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="36" column="62" selection-start-line="36" selection-start-column="62" selection-end-line="36" selection-end-column="62" />
+              <caret line="60" column="0" selection-start-line="60" selection-start-column="0" selection-end-line="60" selection-end-column="0" />
               <folding>
+                <element signature="imports" expanded="true" />
                 <element signature="docComment;class#CVSReader#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CVSReaderTest.groovy" pinned="false" current-in-tab="true">
+      <file leaf-file-name="CVSReaderTest.groovy" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/test/java/com/tierconnect/riot/simulator/test/unit_test/utils/CVSReaderTest.groovy">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.55427253">
-              <caret line="32" column="46" selection-start-line="32" selection-start-column="46" selection-end-line="32" selection-end-column="46" />
-              <folding />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="77" column="0" selection-start-line="77" selection-start-column="0" selection-end-line="77" selection-end-column="0" />
+              <folding>
+                <element signature="e#138#204#0" expanded="false" />
+                <element signature="n#!!block;n#tearDown#0;n#!!block;n#CVSReaderTest#0" expanded="false" />
+                <element signature="n#!!block;n#testParse#0;n#!!block;n#CVSReaderTest#0" expanded="false" />
+                <element signature="e#677#1405#0" expanded="false" />
+                <element signature="n#!!block;n#testParseWithOutSeparator#0;n#!!block;n#CVSReaderTest#0" expanded="false" />
+                <element signature="e#1776#2504#0" expanded="false" />
+                <element signature="n#!!block;n#testParseWithOther#0;n#!!block;n#CVSReaderTest#0" expanded="false" />
+                <element signature="e#2878#2941#1" expanded="false" />
+                <element signature="e#2878#2941#0" expanded="false" />
+                <element signature="e#2878#2941#1" expanded="false" />
+                <element signature="n#!!block;n#testParseFileWithSpaces#0;n#!!block;n#CVSReaderTest#0" expanded="false" />
+                <element signature="n#!!block;n#testParseFileHeadEmptyAndSpaces#0;n#!!block;n#CVSReaderTest#0" expanded="false" />
+                <element signature="n#!!block;n#testParseFileHeadEmptyAndSpacesHeaderFalse#0;n#!!block;n#CVSReaderTest#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DAO.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/tierconnect/riot/simulator/dao/DAO.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="16" column="36" selection-start-line="16" selection-start-column="36" selection-end-line="16" selection-end-column="36" />
+              <folding>
+                <element signature="docComment;class#DAO#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="HttpClientService.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/tierconnect/riot/simulator/utils/HttpClientService.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.6096998">
+              <caret line="42" column="30" selection-start-line="42" selection-start-column="30" selection-end-line="42" selection-end-column="30" />
+              <folding>
+                <element signature="docComment;class#HttpClientService#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -134,7 +150,17 @@
         <entry file="file://$PROJECT_DIR$/src/test/resources/csv/customersWithSpaces.csv">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="4" column="64" selection-start-line="4" selection-start-column="33" selection-end-line="4" selection-end-column="64" />
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="customersSeparator-.csv" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/resources/csv/customersSeparator-.csv">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="1" column="6" selection-start-line="1" selection-start-column="6" selection-end-line="1" selection-end-column="6" />
               <folding />
             </state>
           </provider>
@@ -440,8 +466,9 @@
         <option value="$PROJECT_DIR$/src/test/resources/csv/customersWithSpaces.csv" />
         <option value="$PROJECT_DIR$/src/test/resources/csv/customHeaderEmptyAndSpaces.csv" />
         <option value="$PROJECT_DIR$/src/test/resources/csv/customers.csv" />
-        <option value="$PROJECT_DIR$/src/test/java/com/tierconnect/riot/simulator/test/unit_test/utils/CVSReaderTest.groovy" />
+        <option value="$PROJECT_DIR$/src/test/resources/csv/customersSeparator-.csv" />
         <option value="$PROJECT_DIR$/src/main/java/com/tierconnect/riot/simulator/utils/CVSReader.java" />
+        <option value="$PROJECT_DIR$/src/test/java/com/tierconnect/riot/simulator/test/unit_test/utils/CVSReaderTest.groovy" />
       </list>
     </option>
   </component>
@@ -554,12 +581,22 @@
               <option name="myItemId" value="test" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+          </PATH>
+          <PATH>
             <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
+              <option name="myItemId" value="FMCSAP" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FMCSAP" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="utils" />
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -578,6 +615,96 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FMCSAP" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FMCSAP" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="simulator" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FMCSAP" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FMCSAP" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="simulator" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="dao" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FMCSAP" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FMCSAP" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="simulator" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controllers" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -670,26 +797,6 @@
       <envs />
       <method />
     </configuration>
-    <configuration default="false" name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="com.tierconnect.riot.simulator.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="MAIN_CLASS_NAME" value="com.tierconnect.riot.simulator.Main" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="FMCSAP" />
-      <envs />
-      <method />
-    </configuration>
     <configuration default="false" name="CVSReaderTest.testParse" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
@@ -730,6 +837,32 @@
       <option name="MAIN_CLASS_NAME" value="com.tierconnect.riot.simulator.test.unit_test.utils.CVSReaderTest" />
       <option name="METHOD_NAME" />
       <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="false" name="CVSReaderTest.testParseWithOutSeparator" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="com.tierconnect.riot.simulator.test.unit_test.utils.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="FMCSAP" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="com.tierconnect.riot.simulator.test.unit_test.utils" />
+      <option name="MAIN_CLASS_NAME" value="com.tierconnect.riot.simulator.test.unit_test.utils.CVSReaderTest" />
+      <option name="METHOD_NAME" value="testParseWithOutSeparator" />
+      <option name="TEST_OBJECT" value="method" />
       <option name="VM_PARAMETERS" value="-ea" />
       <option name="PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
@@ -1232,17 +1365,17 @@
     <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Application.SenderZones" />
       <item index="1" class="java.lang.String" itemvalue="Application.Sender" />
-      <item index="2" class="java.lang.String" itemvalue="Application.Main" />
-      <item index="3" class="java.lang.String" itemvalue="JUnit.CVSReaderTest.testParse" />
-      <item index="4" class="java.lang.String" itemvalue="JUnit.CVSReaderTest" />
+      <item index="2" class="java.lang.String" itemvalue="JUnit.CVSReaderTest.testParse" />
+      <item index="3" class="java.lang.String" itemvalue="JUnit.CVSReaderTest" />
+      <item index="4" class="java.lang.String" itemvalue="JUnit.CVSReaderTest.testParseWithOutSeparator" />
     </list>
     <recent_temporary>
       <list size="5">
         <item index="0" class="java.lang.String" itemvalue="JUnit.CVSReaderTest" />
-        <item index="1" class="java.lang.String" itemvalue="JUnit.CVSReaderTest.testParse" />
-        <item index="2" class="java.lang.String" itemvalue="Application.Sender" />
-        <item index="3" class="java.lang.String" itemvalue="Application.SenderZones" />
-        <item index="4" class="java.lang.String" itemvalue="Application.Main" />
+        <item index="1" class="java.lang.String" itemvalue="JUnit.CVSReaderTest.testParseWithOutSeparator" />
+        <item index="2" class="java.lang.String" itemvalue="JUnit.CVSReaderTest.testParse" />
+        <item index="3" class="java.lang.String" itemvalue="Application.Sender" />
+        <item index="4" class="java.lang.String" itemvalue="Application.SenderZones" />
       </list>
     </recent_temporary>
   </component>
@@ -1270,32 +1403,11 @@
       <workItem from="1457129691640" duration="41787000" />
       <workItem from="1457448769784" duration="16476000" />
       <workItem from="1457526400347" duration="28566000" />
-      <workItem from="1457613846637" duration="36755000" />
+      <workItem from="1457613846637" duration="39595000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="CVSReaderTest - 2016.03.11 at 16h 12m 33s.xml">
-      <configuration name="CVSReaderTest" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="CVSReaderTest - 2016.03.11 at 16h 13m 05s.xml">
-      <configuration name="CVSReaderTest" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="CVSReaderTest - 2016.03.11 at 16h 16m 25s.xml">
-      <configuration name="CVSReaderTest" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="CVSReaderTest - 2016.03.11 at 16h 19m 18s.xml">
-      <configuration name="CVSReaderTest" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="CVSReaderTest - 2016.03.11 at 16h 19m 40s.xml">
-      <configuration name="CVSReaderTest" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="CVSReaderTest - 2016.03.11 at 16h 27m 36s.xml">
-      <configuration name="CVSReaderTest" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="CVSReaderTest - 2016.03.11 at 16h 28m 10s.xml">
-      <configuration name="CVSReaderTest" configurationId="JUnit" />
-    </history-entry>
     <history-entry file="CVSReaderTest - 2016.03.11 at 16h 29m 07s.xml">
       <configuration name="CVSReaderTest" configurationId="JUnit" />
     </history-entry>
@@ -1305,9 +1417,30 @@
     <history-entry file="CVSReaderTest - 2016.03.11 at 16h 30m 20s.xml">
       <configuration name="CVSReaderTest" configurationId="JUnit" />
     </history-entry>
+    <history-entry file="CVSReaderTest - 2016.03.11 at 16h 40m 56s.xml">
+      <configuration name="CVSReaderTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="CVSReaderTest - 2016.03.11 at 16h 44m 06s.xml">
+      <configuration name="CVSReaderTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="CVSReaderTest - 2016.03.11 at 16h 44m 41s.xml">
+      <configuration name="CVSReaderTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="CVSReaderTest - 2016.03.11 at 16h 45m 57s.xml">
+      <configuration name="CVSReaderTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="CVSReaderTest - 2016.03.11 at 16h 46m 05s.xml">
+      <configuration name="CVSReaderTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="CVSReaderTest - 2016.03.11 at 16h 46m 09s.xml">
+      <configuration name="CVSReaderTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="CVSReaderTest_testParseWithOutSeparator - 2016.03.11 at 16h 43m 57s.xml">
+      <configuration name="CVSReaderTest.testParseWithOutSeparator" configurationId="JUnit" />
+    </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="126121000" />
+    <option name="totallyTimeSpent" value="128961000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1320,20 +1453,20 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1584" height="806" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32848838" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3270349" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32994187" sideWeight="0.5077821" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32848838" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32994187" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32994187" sideWeight="0.4922179" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32848838" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24967575" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24967575" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24967575" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24967575" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32994187" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41893643" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -1341,7 +1474,7 @@
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3997093" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3997093" sideWeight="0.49481192" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1434,7 +1567,7 @@
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="185" />
+      <option name="time" value="188" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="JUnit">
@@ -1450,13 +1583,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/FMCSAP.iml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="3" column="59" selection-start-line="1" selection-start-column="74" selection-end-line="1" selection-end-column="86" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.idea/gradle.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-3.75">
@@ -1475,14 +1601,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpclient/4.3.5/9351922abd5e659dcbacb1d38b81d8069bac797b/httpclient-4.3.5-sources.jar!/org/apache/http/client/HttpClient.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="48" column="27" selection-start-line="48" selection-start-column="17" selection-end-line="48" selection-end-column="27" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1698,17 +1816,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/tierconnect/riot/simulator/utils/HttpClientService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="100" column="0" selection-start-line="100" selection-start-column="0" selection-end-line="100" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/tierconnect/riot/simulator/utils/HttpResponseConverter.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="12" column="61" selection-start-line="12" selection-start-column="50" selection-end-line="12" selection-end-column="61" />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="docComment;class#HttpResponseConverter#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1716,6 +1831,11 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="docComment;class#JSonConverter#0" expanded="false" />
+            <element signature="method#jsonStringToObject#0;class#JSonConverter#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1738,17 +1858,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/tierconnect/riot/simulator/dao/DAO.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="16" column="51" selection-start-line="16" selection-start-column="51" selection-end-line="16" selection-end-column="67" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/tierconnect/riot/simulator/dao/ZoneDAO.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="40" column="5" selection-start-line="40" selection-start-column="5" selection-end-line="40" selection-end-column="5" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1931,7 +2045,15 @@
     <entry file="file://$PROJECT_DIR$/src/test/resources/csv/customersWithSpaces.csv">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="4" column="64" selection-start-line="4" selection-start-column="33" selection-end-line="4" selection-end-column="64" />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/resources/csv/customersSeparator-.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="1" column="6" selection-start-line="1" selection-start-column="6" selection-end-line="1" selection-end-column="6" />
           <folding />
         </state>
       </provider>
@@ -1939,8 +2061,9 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/com/tierconnect/riot/simulator/utils/CVSReader.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="36" column="62" selection-start-line="36" selection-start-column="62" selection-end-line="36" selection-end-column="62" />
+          <caret line="60" column="0" selection-start-line="60" selection-start-column="0" selection-end-line="60" selection-end-column="0" />
           <folding>
+            <element signature="imports" expanded="true" />
             <element signature="docComment;class#CVSReader#0" expanded="false" />
           </folding>
         </state>
@@ -1948,9 +2071,51 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test/java/com/tierconnect/riot/simulator/test/unit_test/utils/CVSReaderTest.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.55427253">
-          <caret line="32" column="46" selection-start-line="32" selection-start-column="46" selection-end-line="32" selection-end-column="46" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="77" column="0" selection-start-line="77" selection-start-column="0" selection-end-line="77" selection-end-column="0" />
+          <folding>
+            <element signature="e#138#204#0" expanded="false" />
+            <element signature="n#!!block;n#tearDown#0;n#!!block;n#CVSReaderTest#0" expanded="false" />
+            <element signature="n#!!block;n#testParse#0;n#!!block;n#CVSReaderTest#0" expanded="false" />
+            <element signature="e#677#1405#0" expanded="false" />
+            <element signature="n#!!block;n#testParseWithOutSeparator#0;n#!!block;n#CVSReaderTest#0" expanded="false" />
+            <element signature="e#1776#2504#0" expanded="false" />
+            <element signature="n#!!block;n#testParseWithOther#0;n#!!block;n#CVSReaderTest#0" expanded="false" />
+            <element signature="e#2878#2941#1" expanded="false" />
+            <element signature="e#2878#2941#0" expanded="false" />
+            <element signature="e#2878#2941#1" expanded="false" />
+            <element signature="n#!!block;n#testParseFileWithSpaces#0;n#!!block;n#CVSReaderTest#0" expanded="false" />
+            <element signature="n#!!block;n#testParseFileHeadEmptyAndSpaces#0;n#!!block;n#CVSReaderTest#0" expanded="false" />
+            <element signature="n#!!block;n#testParseFileHeadEmptyAndSpacesHeaderFalse#0;n#!!block;n#CVSReaderTest#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/tierconnect/riot/simulator/dao/DAO.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="16" column="36" selection-start-line="16" selection-start-column="36" selection-end-line="16" selection-end-column="36" />
+          <folding>
+            <element signature="docComment;class#DAO#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpclient/4.3.5/9351922abd5e659dcbacb1d38b81d8069bac797b/httpclient-4.3.5-sources.jar!/org/apache/http/client/HttpClient.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33256352">
+          <caret line="48" column="17" selection-start-line="48" selection-start-column="17" selection-end-line="48" selection-end-column="17" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/tierconnect/riot/simulator/utils/HttpClientService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6096998">
+          <caret line="42" column="30" selection-start-line="42" selection-start-column="30" selection-end-line="42" selection-end-column="30" />
+          <folding>
+            <element signature="docComment;class#HttpClientService#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
