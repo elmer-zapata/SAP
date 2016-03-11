@@ -180,6 +180,7 @@ public class Sender{
                                   String port,
                                   String group,
                                   String name,
+                                  String serialNumber,
                                   String thingTypeCode,
                                   String zonaName,
                                   String idThing,
@@ -191,9 +192,10 @@ public class Sender{
             Map messageDetailZone = new HashMap<>();
             message.put("group", group);
             message.put("name", name);
-            message.put("serialNumber", name.replace(" ", "."));
+            message.put("serialNumber", serialNumber);
             message.put("thingTypeCode", thingTypeCode);
             message.put("udfs", messageDetail);
+            message.put("time", timePush);
             messageDetail.put("zone", messageDetailZone);
             messageDetailZone.put("value", zonaName);
             messageDetailZone.put("time", timePush);
@@ -257,42 +259,17 @@ public class Sender{
 
     }
 
-    public static boolean haveProduct(String host, Map<String, Object> a) throws IOException{
-        Map<String, Object> group = getSomething("http://"
-                                                 + host
-                                                 + ":8080/riot-core-services/api/things/?where=thingTypeCode%3Dproduct_code%26Customers.value._id%3D"
-                                                 + a.get("id")
-                                                 + "&treeView=false");
-
-        List<Map<String, Object>> grou = (List)group.get("results");
-        if (grou.size() > 0) {
-            if (grou.get(0).get("groupId").toString() != null) {
-                return true;
-            }
-        }
-        return false;
-
-
-    }
-
-    public static List<Map<String, Object>> returnParent(String host, Map<String, Object> a) throws IOException{
-        Map<String, Object> group = getSomething("http://"
-                                                 + host
-                                                 + ":8080/riot-core-services/api/things/?where=thingTypeCode%3Dproduct_code%26Customers.value._id%3D"
-                                                 + a.get("id")
-                                                 + "&treeView=false");
-
-        return (List)group.get("results");
-
-
-    }
-
     public static void main(String[] arg) throws IOException{
 
         int numRecords = 200;
-        int zoneMovMax = 9;
-        double probability = 0.25;
-        double notShippingProb = 0.50;
+        int clientZoneMovMax = 9;
+        int minTimeInZoneSec = 30;
+        int maxTimeInZoneSec = 300;
+
+        //probability shipping product and no shipping
+        double shippingProb = 0.25;
+        double purchaseProb = 0.50;
+        double fittingRoomProb = 0.75;
 
         String host = "localhost";
         String port = "8080";
@@ -327,13 +304,13 @@ public class Sender{
 
         //get de todos los customers
         Map<String, Object> customerThings = getSomething("http://"
-                                                  +
-                                                  host
-                                                  + ":"
-                                                  + port
-                                                  + "/riot-core-services/api/thing/?pageSize=-1&where=thingType.thingTypeCode%3D"
-                                                  + thingTypeCode
-                                                  + "&extra=thingType%2Cgroup");
+                                                          +
+                                                          host
+                                                          + ":"
+                                                          + port
+                                                          + "/riot-core-services/api/thing/?pageSize=-1&where=thingType.thingTypeCode%3D"
+                                                          + thingTypeCode
+                                                          + "&extra=thingType%2Cgroup");
 
         Map<String, Object> thingsRFID = getSomething("http://"
                                                       +
@@ -361,10 +338,11 @@ public class Sender{
                        port,
                        ">ViZix.retail>Retail.Main.Store",
                        objThingsRFID.get(k).get("name").toString(),
+                       objThingsRFID.get(k).get("serial").toString(),
                        "retail.RFID.tag",
                        objZones.get((int)(Math.random() * objZones.size())).get("code").toString(),
                        objThingsRFID.get(k).get("id").toString(),
-                       String.valueOf(System.currentTimeMillis()));
+                       null);
         }
 
         Simulator.Simulate(numRecords,
@@ -372,9 +350,13 @@ public class Sender{
                            objZones,
                            host,
                            port,
-                           probability,
-                           notShippingProb,
-                           zoneMovMax,
+                           shippingProb,
+                           purchaseProb,
+                           fittingRoomProb,
+                           clientZoneMovMax,
+                           minTimeInZoneSec,
+                           maxTimeInZoneSec,
+                           zoneExitCode,
                            Fitting1,
                            Fitting2);
     }

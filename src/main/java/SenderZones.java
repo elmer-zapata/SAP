@@ -263,56 +263,6 @@ public class SenderZones{
 
     }
 
-    public static void modifyZone(String host,
-                                  String port,
-                                  String group,
-                                  String name,
-                                  String thingTypeCode,
-                                  String zonaName,
-                                  String idThing,
-                                  String timePush){
-
-        try{
-            Map message = new HashMap<>();
-            Map messageDetail = new HashMap<>();
-            Map messageDetailZone = new HashMap<>();
-            message.put("group", group);
-            message.put("name", name);
-            message.put("serialNumber", name);
-            message.put("thingTypeCode", thingTypeCode);
-            message.put("udfs", messageDetail);
-            messageDetail.put("zone", messageDetailZone);
-            messageDetailZone.put("value", zonaName);
-            messageDetailZone.put("time", timePush);
-
-
-            // System.out.println("messa" + message.toString());
-            System.out.println("http://" + host + ":" + port + "/riot-core-services/api/thing/" + idThing);
-            patchSomething("http://" + host + ":" + port + "/riot-core-services/api/thing/" + idThing, message);
-        }
-        catch(Exception ex){
-            ex.printStackTrace();
-        }
-
-    }
-
-    public static String groupThing(String idGroup, String host, String port) throws IOException{
-        Map<String, Object> group = getSomething("http://"
-                                                 + host
-                                                 + ":"
-                                                 + port
-                                                 + "/riot-core-services/api/group/?where=id%3D"
-                                                 + idGroup);
-
-        List<Map<String, Object>> grou = (List)group.get("results");
-        if (group == null) {
-            System.out.println("si");
-        }
-        // System.out.print(group);
-        return grou.get(0).get("hierarchyName").toString();
-
-    }
-
     public static String getSomeValueGroup(String name, String host, String port, String something) throws IOException{
         Map<String, Object> group = getSomething(host + ":8080/riot-core-services/api/group/?where=code%3D" + name);
         List<Map<String, Object>> grou = (List)group.get("results");

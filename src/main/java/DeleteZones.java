@@ -69,13 +69,6 @@ public class DeleteZones {
         ClientConnectionManager ccm = new PoolingClientConnectionManager(registry);
         client = new DefaultHttpClient(ccm);
     }
-    public static String getDate(long timeStamp) {
-        DateTimeFormatter isoDateFormat = ISODateTimeFormat.dateTime();
-        String isoDateStr = isoDateFormat.print(new DateTime(timeStamp));
-        return isoDateStr;
-    }
-
-
 
     public static Map getSomething(String endpoint) throws IOException {
 
@@ -129,66 +122,6 @@ public class DeleteZones {
         //Map<String,Object> es=objlist.get(0);
         //  System.out.print(es.get("zonePoints"));
         return finalResult;
-    }
-
-    public static void patchSomething(String endpoint,Map message) throws IOException {
-
-
-        HttpClient client = HttpClientBuilder.create().build();
-        HttpPatch request=new HttpPatch(endpoint);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        // add request header
-        // request.addHeader("User-Agent", USER_AGENT);
-        request.addHeader("content-type", "application/json");
-        request.addHeader("Api_key","root");
-        String jsonBody="";
-        if (message != null) {
-            System.out.println("el mensage no es null");
-            jsonBody = objectMapper.writeValueAsString(message);
-            //System.out.println("json en el patch"+jsonBody);
-            //jsonBody=jsonBody.replace("=",":");
-        }
-        request.setEntity(new StringEntity(jsonBody));
-
-        HttpResponse response = client.execute(request);
-        Map finalResult = null;
-        boolean error = false;
-        String errorMessage = null;
-        System.out.println("Response Code : "
-                + response.getStatusLine().getStatusCode());
-        HttpEntity entity = response.getEntity();
-        StringBuffer responseStringBuffer = new StringBuffer();
-        if (entity != null && entity.getContent() != null) {
-            BufferedReader in = new BufferedReader(new InputStreamReader(entity.getContent()));
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                responseStringBuffer.append(inputLine);
-            }
-            in.close();
-        }
-        String responseString = responseStringBuffer.toString();
-        int statusCode = response.getStatusLine().getStatusCode();
-        if (StringUtils.isNotBlank(responseString)) {
-            Map<String, Object> mapResult = new HashMap<String, Object>();
-            try {
-                mapResult = objectMapper.readValue(responseString, HashMap.class);
-                //        System.out.print("entro");
-                finalResult = mapResult;
-
-
-            } catch (Exception ex) {
-                error = true;
-                errorMessage = ex.getMessage();
-            }
-        }  else {
-            error = true;
-            errorMessage = "Empty Response from SAP";
-        }
-
-        List<Map<String,Object>> objlist=(List)finalResult.get("results");
-
-
     }
 
     public static void deleteSomething(String endpoint) throws IOException {
@@ -248,167 +181,6 @@ public class DeleteZones {
 
     }
 
-    public static void postSomething(String endpoint,Map message) throws IOException {
-
-
-        HttpClient client = HttpClientBuilder.create().build();
-        HttpPost request=new HttpPost(endpoint);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        // add request header
-        // request.addHeader("User-Agent", USER_AGENT);
-        request.addHeader("content-type", "application/json");
-        request.addHeader("Api_key","root");
-        String jsonBody="";
-        if (message != null) {
-            System.out.println("el mensage no es null");
-            jsonBody = objectMapper.writeValueAsString(message);
-            jsonBody="["+jsonBody+"]";
-            System.out.println("json en el patch"+jsonBody);
-            //jsonBody=jsonBody.replace("=",":");
-        }
-        request.setEntity(new StringEntity(jsonBody));
-
-        HttpResponse response = client.execute(request);
-        Map finalResult = null;
-        boolean error = false;
-        String errorMessage = null;
-        System.out.println("Response Code : "
-                + response.getStatusLine().getStatusCode());
-        HttpEntity entity = response.getEntity();
-        StringBuffer responseStringBuffer = new StringBuffer();
-        if (entity != null && entity.getContent() != null) {
-            BufferedReader in = new BufferedReader(new InputStreamReader(entity.getContent()));
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                responseStringBuffer.append(inputLine);
-            }
-            in.close();
-        }
-        String responseString = responseStringBuffer.toString();
-        int statusCode = response.getStatusLine().getStatusCode();
-        if (StringUtils.isNotBlank(responseString)) {
-            Map<String, Object> mapResult = new HashMap<String, Object>();
-            try {
-                mapResult = objectMapper.readValue(responseString, HashMap.class);
-                //        System.out.print("entro");
-                finalResult = mapResult;
-
-
-            } catch (Exception ex) {
-                error = true;
-                errorMessage = ex.getMessage();
-            }
-        }  else {
-            error = true;
-            errorMessage = "Empty Response from SAP";
-        }
-
-        // List<Map<String,Object>> objlist=(List)finalResult.get("results");
-
-
-    }
-
-
-
-
-    public static void modifyZone(String host,String port,String group,String name,String thingTypeCode,String zonaName,String idThing,String timePush){
-
-        try {
-            Map message = new HashMap<>();
-            Map messageDetail = new HashMap<>();
-            Map messageDetailZone = new HashMap<>();
-            message.put("group", group);
-            message.put("name", name);
-            message.put("serialNumber", name);
-            message.put("thingTypeCode", thingTypeCode);
-            message.put("udfs", messageDetail);
-            messageDetail.put("zone", messageDetailZone);
-            messageDetailZone.put("value", zonaName);
-            messageDetailZone.put("time",timePush);
-
-
-            // System.out.println("messa" + message.toString());
-            System.out.println("http://" + host + ":" + port + "/riot-core-services/api/thing/" + idThing);
-            patchSomething("http://" + host + ":" + port + "/riot-core-services/api/thing/" + idThing, message);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-    }
-
-
-    public static String groupThing(String idGroup,String host, String port) throws IOException {
-        Map<String,Object>group=getSomething("http://"+host+":"+port+"/riot-core-services/api/group/?where=id%3D"+idGroup);
-
-        List<Map<String,Object>> grou=(List)group.get("results");
-        if(group==null)System.out.println("si");
-        // System.out.print(group);
-        return grou.get(0).get("hierarchyName").toString();
-
-    }
-
-    public static String getSomeValueGroup(String name,String host,String port,String something)throws IOException{
-        Map<String,Object>group=getSomething(host+":8080/riot-core-services/api/group/?where=code%3D"+name);
-        List<Map<String,Object>> grou=(List)group.get("results");
-        return  grou.get(0).get(something).toString();
-    }
-
-    public static void migrateZones(String hostGet,String portGet,String hostPut,String portPut,String idFacilityMap,String groupForSearch) throws IOException {
-        Map<String,Object>zones=getSomething(hostGet+":"+portGet+"/riot-core-services/api/zone/?pageSize=-1&where=localMap.id%3D"+idFacilityMap+"&extra=localMap%2Cgroup%2CzoneGroup%2CzoneType");
-        System.out.println(hostGet+":"+portGet+"/riot-core-services/api/zone/?pageSize=1&where=localMap.id%3D"+idFacilityMap);
-        Map<String,Object>zoneType=getSomething(hostPut+":8080/riot-core-services/api/zoneType/");
-
-        String idGroup=getSomeValueGroup(groupForSearch,hostPut,portPut,"id");
-        Map<String,Object>zoneGroup=getSomething(hostPut+":8080/riot-core-services/api/zoneGroup/?where=group.id%3D"+idGroup);
-        System.out.println(zoneGroup);
-        List<Map<String,Object>> listZoneGroup=(List)zoneGroup.get("results");
-        String idZG=listZoneGroup.get(0).get("id").toString();
-
-        Map<String,Object>localMap=getSomething(hostPut+":8080/riot-core-services/api/localMap/?where=name%3DMain%20Store");
-        List<Map<String,Object>> map=(List)localMap.get("results");
-        String idMap=map.get(0).get("id").toString();
-
-
-        List<Map<String,Object>>listZoneType=(List)zoneType.get("results");
-
-        List<Map<String,Object>>listZone=(List)zones.get("results");
-        //System.out.print(zones);
-        for (int i=0;i<listZone.size();i++){
-            Map<String,Object> oneZone=listZone.get(i);
-            try {
-                System.out.println("entor");
-                Map message = new HashMap<>();
-                Map messageZonePoints = new HashMap<>();
-                Map messageDetailZone = new HashMap<>();
-                Map<String,Object>group=(Map)oneZone.get("group");
-                //Map<String,Object>group=(Map)oneZone.get("localMap");
-                //Map<String,Object>group=(Map)oneZone.get("zoneGroup");
-
-                message.put("zonePoints",oneZone.get("zonePoints"));
-                message.put("name", oneZone.get("name"));
-                message.put("code",oneZone.get("code"));
-                message.put("description", oneZone.get("description"));
-                message.put("color",oneZone.get("color"));
-                message.put("localMap.id",Integer.parseInt(idMap));
-                message.put("zoneGroup.id",Integer.parseInt(idZG));
-                message.put("group.id",Integer.parseInt(idGroup));
-                message.put("zoneType",listZoneType.get(0));
-
-                System.out.println(message);
-
-
-                postSomething(hostPut + ":" + portPut + "/riot-core-services/api/zone/", message);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
-
-        }
-
-    }
-
-
     public static void deleteZones(String hostGet,String portGet,String hostPut,String portPut,String idFacilityMap,String groupForSearch) throws IOException {
         Map<String,Object>zones=getSomething(hostGet+":"+portGet+"/riot-core-services/api/zone/?pageSize=-1&where=localMap.id%3D"+idFacilityMap+"&extra=localMap%2Cgroup%2CzoneGroup%2CzoneType");
         System.out.println(hostGet+":"+portGet+"/riot-core-services/api/zone/?pageSize=1&where=localMap.id%3D"+idFacilityMap);
@@ -429,6 +201,7 @@ public class DeleteZones {
         }
 
     }
+
     public static void main(String[]arg) throws IOException {
         Scanner lee=new Scanner(System.in);
         int num_records=100;

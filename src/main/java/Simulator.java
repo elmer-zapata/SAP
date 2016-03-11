@@ -1,15 +1,9 @@
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
-
 import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by angelchambi on 3/7/16.
+ * Simulator Purchase in Store
  */
 public class Simulator{
 
@@ -19,9 +13,13 @@ public class Simulator{
                                 List<Map<String, Object>> objZones,
                                 String host,
                                 String port,
-                                double probability,
-                                double notShippingProb,
+                                double shippingProb,
+                                double purchaseProb,
+                                double fittingRoomProb,
                                 int zoneMovMax,
+                                int minTimeInZoneSec,
+                                int maxTimeInZoneSec,
+                                String zoneExitCode,
                                 String Fitting1,
                                 String Fitting2){
         long current = System.currentTimeMillis();
@@ -32,116 +30,94 @@ public class Simulator{
 
                 //get Customer, Customer Thing Type and Group
                 Map<String, Object> thingCustomer = objCustomerThings.get(i);
-                Map<String, Object> thingTypeCustomer = (Map)thingCustomer.get("thingType");
-                Map<String, Object> groupCustomer = (Map)thingCustomer.get("group");
+                Map thingTypeCustomer = (Map)thingCustomer.get("thingType");
+                String groupCustomerHierarchyName = ((Map)thingCustomer.get("group")).get("hierarchyName").toString();
 
-                //set Random moves between zones MAX NUMBER.
+                //set Random moves between zones with MAX NUMBER and MIN NUMBER.
                 int randomMoves = (int)(Math.random() * zoneMovMax);
+
                 Timestamp stamp = new Timestamp(current);
                 java.sql.Date date = new java.sql.Date(stamp.getTime());
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(date);
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
 
-                //hacer el primer movimiento a la zona o zonas de entrada
-                String timeForTheLast = "";
+                ArrayList<Map<String, Object>> listShippingProducts = new ArrayList<>();
+
+                int x = 0;
                 for(int j = 1; j <= randomMoves; j++){
-                    int randomZone = (int)(Math.random() * objZones.size());
-
-                    //sacar una zona a la suerte
-                    Map<String, Object> es = objZones.get(randomZone);
-
-                    //cambiar el random de tiempo
-                    int randomTime = 30 + (int)(Math.random() * 300);
-
-                    cal.add(Calendar.SECOND, randomTime);
-                    java.sql.Date date2 = new java.sql.Date(cal.getTime().getTime());
-
-                    //logger.info(date2);
-                    long initialTime = date2.getTime();
-
-                    //aqui hacer el update del thing si es q la probabilidad nos deja
-                    String timePush = String.valueOf(initialTime);
-                    timeForTheLast = timePush;
-
-                    //Get All Things in zone where the customer was moved.
-                    Map<String, Object> thingsInZones = Sender.getSomething("http://"
-                                                                            + host
-                                                                            + ":"
-                                                                            + port
-                                                                            + ""
-                                                                            + "/riot-core-services/api/things/?pageSize=-1&where=children.zone.value.name%3D"
-                                                                            + es.get("name")
-                                                                                .toString()
-                                                                                .replace(" ", "%20")
-                                                                            + "%26Status.value%3C%3ESold&treeView=false");
 
 
-                    List<Map<String, Object>> listThings = (List)thingsInZones.get("results");
+                    //get random zone
+                    //Posible error:  REPEATED ZONE, it must have a control to random number  in zones.
+                    Map<String, Object> zoneRandom = objZones.get((int)(Math.random() * objZones.size()));
 
 
-                    if (listThings.size() > 0) {
-                        System.out.println("The things in zone where the customer was moved are: " + listThings.size());
+                    //Set random Time in zone with min time in zone and max time in zone.
+                    String timePush = timeRandomIncrement(calendar, minTimeInZoneSec, maxTimeInZoneSec,  x);
 
-                        int thingInZoneRandom = (int)(Math.random() * listThings.size());
+                    UpdateClientZone(host,
+                                     port,
+                                     groupCustomerHierarchyName,
+                                     thingCustomer.get("name").toString(),
+                                     thingCustomer.get("serial").toString(),
+                                     thingTypeCustomer.get("thingTypeCode").toString(),
+                                     zoneRandom.get("code").toString(),
+                                     thingCustomer.get("id").toString(),
+                                     timePush,
+                                     listShippingProducts);
 
-                        String thingType = listThings.get(thingInZoneRandom).get("thingTypeCode").toString();
+                    // Get All Things in zone where the customer was moved.
+                    // Services not Found End point Thing to children.zone.value.name
+                    // it used Things end point.
+                    Map productInZone = Sender.getSomething("http://"
+                                                            + host
+                                                            + ":"
+                                                            + port
+                                                            + ""
+                                                            + "/riot-core-services/api/things/?"
+                                                            + "pageSize=-1&"
+                                                            + "where=children.zone.value.name%3D"
+                                                            + zoneRandom.get("name").toString().replace(" ", "%20")
+                                                            + "%26Status.value%3C%3ESold&treeView=false"
+                                                            + "&extra=thingType%2Cgroup");
 
-                        String nameChild = listThings.get(thingInZoneRandom).get("name").toString();
+                    List<Map<String, Object>> listProductInZone = (List)productInZone.get("results");
 
 
-                        String groupThing = Sender.groupThing(listThings.get(thingInZoneRandom)
-                                                                        .get("groupId")
-                                                                        .toString(), host, port);
-                        ///cambiar la formula de la probabilidad
-                        if (probability + Math.random() > 1) {
+                    if (listProductInZone.size() > 0) {
+
+                        System.out.println("The things in zone where the customer was moved are: "
+                                           + listProductInZone.size());
+
+                        int indexRandomProduct = (int)(Math.random() * listProductInZone.size());
+                        Map randomProduct = listProductInZone.get(indexRandomProduct);
+                        String prodGroupHierarchyName = Sender.groupThing(randomProduct.get("groupId").toString(),
+                                                                          host,
+                                                                          port);
+                        ///Shipping Probability
+                        if (shippingProb + Math.random() > 1) {
                             try{
-                                Map message = new HashMap<>();
-                                Map messageDetail = new HashMap<>();
-                                Map messageDetailCustomer = new HashMap<>();
-                                message.put("group", groupThing);
-                                message.put("name", nameChild);
-                                message.put("serialNumber", nameChild.replace(" ", "."));
-                                message.put("thingTypeCode", thingType);
-                                message.put("udfs", messageDetail);
-                                messageDetail.put("Customers", messageDetailCustomer);
-                                messageDetailCustomer.put("value",
-                                                          thingCustomer.get("name").toString().replace(" ", "."));
-                                messageDetailCustomer.put("time", timePush);
-                                System.out.println("message" + message);
-                                System.out.println("message2" + listThings.get(thingInZoneRandom));
+                                System.out.println("The product choice in Zone: " + randomProduct);
+
+                                Map message = AssociateProdWithCustomer(prodGroupHierarchyName,
+                                                                        randomProduct.get("name").toString(),
+                                                                        randomProduct.get("serialNumber").toString(),
+                                                                        randomProduct.get("thingTypeCode").toString(),
+                                                                        timePush,
+                                                                        thingCustomer.get("serial").toString());
+
+
+                                randomProduct.put("hierarchyName", prodGroupHierarchyName);
+
+                                listShippingProducts.add(randomProduct);
 
                                 Sender.patchSomething("http://"
                                                       + host
                                                       + ":"
                                                       + port
                                                       + "/riot-core-services/api/thing/"
-                                                      + listThings.get(thingInZoneRandom).get("_id").toString(),
-                                                      message);
-                                Sender.modifyZone(host,
-                                                  port,
-                                                  groupCustomer.get("hierarchyName").toString(),
-                                                  thingCustomer.get("name").toString(),
-                                                  thingTypeCustomer.get("thingTypeCode").toString(),
-                                                  es.get("code").toString(),
-                                                  thingCustomer.get("id").toString(),
-                                                  timePush);
-                                //modificar la zona de todos los productos asociados al customer
-                            }
-                            catch(Exception ex){
-                                ex.printStackTrace();
-                            }
-                        }
-                        else {
-                            try{
-                                //modificar la zona de todos los productos asociados al customer
-                                Sender.modifyZone(host,
-                                                  port,
-                                                  groupCustomer.get("hierarchyName").toString(),
-                                                  thingCustomer.get("name").toString(),
-                                                  thingTypeCustomer.get("thingTypeCode").toString(),
-                                                  es.get("code").toString(),
-                                                  thingCustomer.get("id").toString(),
-                                                  timePush);
+                                                      + randomProduct.get("_id").toString(), message);
+
                             }
                             catch(Exception ex){
                                 ex.printStackTrace();
@@ -149,69 +125,181 @@ public class Simulator{
                         }
 
                     }
-                    else {
-                        Sender.modifyZone(host,
-                                          port,
-                                          groupCustomer.get("hierarchyName").toString(),
-                                          thingCustomer.get("name").toString(),
-                                          thingTypeCustomer.get("thingTypeCode").toString(),
-                                          es.get("code").toString(),
-                                          thingCustomer.get("id").toString(),
-                                          timePush);
-                    }
+
                 }
 
+                // probability to go to fitting room
+                if (fittingRoomProb + Math.random() > 1 && listShippingProducts.size() != 0) {
+                    String fitting = ((int)(Math.random() * 3) == 2)?Fitting1:Fitting2;
 
-                ///probabildad de q vaya a los vestidores y no compre todo algunos
-                if (notShippingProb + Math.random() > 1) {
-                    Sender.modifyZone(host,
-                                      port,
-                                      groupCustomer.get("hierarchyName").toString(),
-                                      thingCustomer.get("name").toString(),
-                                      thingTypeCustomer.get("thingTypeCode").toString(),
-                                      ((int)(Math.random() * 3) == 2)?Fitting1:Fitting2,
-                                      thingCustomer.get("id").toString(),
-                                      timeForTheLast);
+                    UpdateClientZone(host,
+                                     port,
+                                     groupCustomerHierarchyName,
+                                     thingCustomer.get("name").toString(),
+                                     thingCustomer.get("serial").toString(),
+                                     thingTypeCustomer.get("thingTypeCode").toString(),
+                                     fitting,
+                                     thingCustomer.get("id").toString(),
+                                     timeRandomIncrement(calendar, minTimeInZoneSec, maxTimeInZoneSec,x),
+                                     listShippingProducts);
+
                 }
 
-
-                int randomTime = (int)(Math.random() * 11);
-                cal.add(Calendar.MINUTE, randomTime);
-                java.sql.Date date2 = new java.sql.Date(cal.getTime().getTime());
-                long initialTime = date2.getTime();
-                timeForTheLast = String.valueOf(initialTime);
-
-                if (Sender.haveProduct(host, thingCustomer)) {
-                    System.out.println("entro ");
-                    List<Map<String, Object>> a = Sender.returnParent(host, thingCustomer);
-                    for(int k = 0; k < a.size(); k++){
-                        System.out.println("entro a modificar el status");
-                        Sender.modifyUdfString(host,
-                                               port,
-                                               groupCustomer.get("hierarchyName").toString(),
-                                               a.get(k).get("serialNumber").toString(),
-                                               a.get(k).get("thingTypeCode").toString(),
-                                               "Sold",
-                                               a.get(k).get("_id").toString(),
-                                               timeForTheLast,
-                                               "Status");
-                    }
-                }
-
-                Sender.modifyZone(host,
-                                  port,
-                                  groupCustomer.get("hierarchyName").toString(),
-                                  thingCustomer.get("name").toString(),
-                                  thingTypeCustomer.get("thingTypeCode").toString(),
-                                  "Main.Exit",
-                                  thingCustomer.get("id").toString(),
-                                  timeForTheLast);
-
-
+                purchaseProductProv(host,
+                                    port,
+                                    zoneExitCode,
+                                    timeRandomIncrement(calendar, minTimeInZoneSec, maxTimeInZoneSec,x),
+                                    purchaseProb,
+                                    listShippingProducts,
+                                    groupCustomerHierarchyName,
+                                    thingCustomer,
+                                    thingTypeCustomer);
             }
         }
         catch(Exception ex){
             System.out.println("ERROR: " + ex);
         }
+    }
+
+    public static void purchaseProductProv(String host,
+                                           String port,
+                                           String zoneExitCode,
+                                           String timePush,
+                                           Double purchaseProb,
+                                           List<Map<String, Object>> listProductsPurchased,
+                                           String groupCustomerHierarchyName,
+                                           Map thingCustomer,
+                                           Map thingTypeCustomer){
+        try{
+            for(int i = 0; i < listProductsPurchased.size(); i++){
+                int purchased = (int)(purchaseProb + Math.random());
+                if (purchased == 1) {
+                    Map product = (Map)listProductsPurchased.get(i);
+                    ChangeZoneProduct(host, port, zoneExitCode, timePush, product);
+                    changeSoldProduct(host, port, product, timePush);
+                }
+            }
+            Sender.modifyZone(host,
+                              port,
+                              groupCustomerHierarchyName,
+                              thingCustomer.get("name").toString(),
+                              thingCustomer.get("serial").toString(),
+                              thingTypeCustomer.get("thingTypeCode").toString(),
+                              zoneExitCode,
+                              thingCustomer.get("id").toString(),
+                              timePush);
+        }
+        catch(Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
+    public static void changeSoldProduct(String host, String port, Map product, String timePush){
+        Sender.modifyUdfString(host,
+                               port,
+                               product.get("hierarchyName").toString(),
+                               product.get("serialNumber").toString(),
+                               product.get("thingTypeCode").toString(),
+                               "Sold",
+                               product.get("_id").toString(),
+                               timePush,
+                               "Status");
+    }
+
+    public static void ChangeZoneProduct(String host, String port, String zoneRandomCode, String timePush, Map product){
+        List<Map> listProductRFID = (List<Map>)product.get("children");
+        for(int j = 0; j < listProductRFID.size(); j++){
+            Map rfidItem = listProductRFID.get(j);
+            Sender.modifyZone(host,
+                              port,
+                              product.get("hierarchyName").toString(),
+                              rfidItem.get("name").toString(),
+                              rfidItem.get("serialNumber").toString(),
+                              rfidItem.get("thingTypeCode").toString(),
+                              zoneRandomCode,
+                              rfidItem.get("_id").toString(),
+                              timePush);
+        }
+    }
+
+    public static Map AssociateProdWithCustomer(String productGroup,
+                                                String productName,
+                                                String productSerialNumber,
+                                                String productThingType,
+                                                String timePush,
+                                                String thingCustomerSerial){
+        Map message = new HashMap<>();
+        Map messageDetail = new HashMap<>();
+        Map messageDetailCustomer = new HashMap<>();
+
+        //Add Thing Type Field Customer to Product Thing.
+        messageDetailCustomer.put("value", thingCustomerSerial);
+        messageDetailCustomer.put("time", timePush);
+
+        messageDetail.put("Customers", messageDetailCustomer);
+
+        message.put("group", productGroup);
+        message.put("name", productName);
+        message.put("serialNumber", productSerialNumber);
+        message.put("thingTypeCode", productThingType);
+        message.put("udfs", messageDetail);
+        message.put("time", timePush);
+        System.out.println("message" + message);
+        return message;
+    }
+
+    public static void ChangeZoneProducts(List<Map<String, Object>> listProductsPurchased,
+                                          String host,
+                                          String port,
+                                          String zoneRandomCode,
+                                          String timePush){
+        try{
+            //Update zone of all purchased things
+            for(int i = 0; i < listProductsPurchased.size(); i++){
+                Map product = (Map)listProductsPurchased.get(i);
+                ChangeZoneProduct(host, port, zoneRandomCode, timePush, product);
+            }
+        }
+        catch(Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
+    public static void UpdateClientZone(String host,
+                                        String port,
+                                        String groupHierarchyName,
+                                        String thingCustomerName,
+                                        String thingCustomerSerial,
+                                        String custThingTypeCode,
+                                        String zoneRandomCode,
+                                        String thingCustomerId,
+                                        String timePush,
+                                        List<Map<String, Object>> listShippingProducts){
+        try{
+            //modificar la zona de todos los productos asociados al customer
+            Sender.modifyZone(host,
+                              port,
+                              groupHierarchyName,
+                              thingCustomerName,
+                              thingCustomerSerial,
+                              custThingTypeCode,
+                              zoneRandomCode,
+                              thingCustomerId,
+                              timePush);
+            ChangeZoneProducts(listShippingProducts, host, port, zoneRandomCode, timePush);
+        }
+        catch(Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
+    public static String timeRandomIncrement(Calendar calendar, int minTimeInZoneSec, int maxTimeInZoneSec, int x){
+        int randomTime = minTimeInZoneSec + (int)(Math.random() * maxTimeInZoneSec);
+        calendar.add(Calendar.SECOND, randomTime);
+        java.sql.Date date = new java.sql.Date(calendar.getTime().getTime());
+        long initialTime = date.getTime();
+        x = x+1;
+        System.out.println("x: " + x);
+        return String.valueOf(initialTime);
     }
 }

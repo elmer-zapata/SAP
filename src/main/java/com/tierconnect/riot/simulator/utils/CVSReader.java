@@ -3,8 +3,10 @@ package com.tierconnect.riot.simulator.utils;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by angelchambi on 3/7/16.
@@ -12,16 +14,35 @@ import java.util.Map;
  */
 
 public class CVSReader{
-    public static void parse(String path, String fileNameWithExtension, String cvsSplitBy){
-        String csvFile = path + fileNameWithExtension;
+    private String cvsFullPath;
+    private String cvsSplitBy;
+    private Boolean firstLineHeader;
+
+    public CVSReader(String pathField, String fileNameWithEx, String cvsSplitByField, Boolean firstLineHeaderField){
+
+        cvsSplitBy = cvsSplitByField;
+        firstLineHeader = firstLineHeaderField;
+        cvsFullPath = Paths.get(System.getProperty("user.dir"), pathField, fileNameWithEx).toString();
+    }
+
+    public List<String[]> parse(){
+
         BufferedReader bufferedReader = null;
+        List<String[]> parseFile = null;
         String line;
 
         try{
-            bufferedReader = new BufferedReader(new FileReader(csvFile));
+            bufferedReader = new BufferedReader(new FileReader(cvsFullPath));
+            parseFile = new ArrayList<>();
             while((line = bufferedReader.readLine()) != null){
-                // use the separator
-                String[] country = line.split(cvsSplitBy);
+                if (firstLineHeader) {
+                    firstLineHeader = false;
+                    continue;
+                }
+                if (! line.equals("")) {
+                    String[] arrayStringLine = line.split(cvsSplitBy);
+                    parseFile.add(arrayStringLine);
+                }
             }
         }
         catch(IOException e){
@@ -37,5 +58,7 @@ public class CVSReader{
                 }
             }
         }
+        return parseFile;
+
     }
 }
