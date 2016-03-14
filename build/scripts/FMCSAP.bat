@@ -69,7 +69,7 @@ set CMD_LINE_ARGS=%$
 :execute
 @rem Setup the command line
 
-set CLASSPATH=%APP_HOME%\lib\FMCSAP.jar;%APP_HOME%\lib\mongo-java-driver-2.13.2.jar;%APP_HOME%\lib\bson-2.13.2.jar;%APP_HOME%\lib\commons-csv-1.1.jar;%APP_HOME%\lib\httpclient-4.3.5.jar;%APP_HOME%\lib\joda-time-2.2.jar;%APP_HOME%\lib\shiro-core-1.2.3.jar;%APP_HOME%\lib\commons-io-1.3.2.jar;%APP_HOME%\lib\commons-lang3-3.0.jar;%APP_HOME%\lib\commons-lang-2.3.jar;%APP_HOME%\lib\log4j-1.2.16.jar;%APP_HOME%\lib\jackson-databind-2.6.1.jar;%APP_HOME%\lib\httpcore-4.3.2.jar;%APP_HOME%\lib\commons-logging-1.1.3.jar;%APP_HOME%\lib\commons-codec-1.6.jar;%APP_HOME%\lib\slf4j-api-1.6.4.jar;%APP_HOME%\lib\commons-beanutils-1.8.3.jar;%APP_HOME%\lib\commons-io-1.3.2.jar;%APP_HOME%\lib\jackson-annotations-2.6.0.jar;%APP_HOME%\lib\jackson-core-2.6.1.jar
+set CLASSPATH=%APP_HOME%\lib\FMCSAP.jar;%APP_HOME%\lib\mongo-java-driver-2.13.2.jar;%APP_HOME%\lib\bson-2.13.2.jar;%APP_HOME%\lib\commons-csv-1.1.jar;%APP_HOME%\lib\httpclient-4.3.5.jar;%APP_HOME%\lib\joda-time-2.2.jar;%APP_HOME%\lib\shiro-core-1.2.3.jar;%APP_HOME%\lib\commons-io-1.3.2.jar;%APP_HOME%\lib\commons-lang3-3.0.jar;%APP_HOME%\lib\commons-lang-2.3.jar;%APP_HOME%\lib\log4j-1.2.16.jar;%APP_HOME%\lib\jackson-databind-2.6.1.jar;%APP_HOME%\lib\httpmime-4.3.5.jar;%APP_HOME%\lib\httpcore-4.3.2.jar;%APP_HOME%\lib\commons-logging-1.1.3.jar;%APP_HOME%\lib\commons-codec-1.6.jar;%APP_HOME%\lib\slf4j-api-1.6.4.jar;%APP_HOME%\lib\commons-beanutils-1.8.3.jar;%APP_HOME%\lib\commons-io-1.3.2.jar;%APP_HOME%\lib\jackson-annotations-2.6.0.jar;%APP_HOME%\lib\jackson-core-2.6.1.jar
 
 @rem Execute FMCSAP
 "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %FMCSAP_OPTS%  -classpath "%CLASSPATH%" main.java.Sender %CMD_LINE_ARGS%

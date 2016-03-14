@@ -27,7 +27,11 @@ public class ZoneDAO extends DAO{
 
         List<NameValuePair> nameValuePairList = new ArrayList<>();
         nameValuePairList.add(new BasicNameValuePair("pageSize", "-1"));
-        return (ListZoneResponse)httpClientService.httpRequest(nameValuePairList, "GET", null, ListZoneResponse.class);
+        return (ListZoneResponse)httpClientService.httpRequest(nameValuePairList,
+                                                               "GET",
+                                                               null,
+                                                               ListZoneResponse.class,
+                                                               "");
 
     }
 

@@ -102,9 +102,9 @@ public class DeleteZones {
             Map<String, Object> mapResult = new HashMap<String, Object>();
             try {
                 mapResult = objectMapper.readValue(responseString, HashMap.class);
-                //List<Object> result=objectMapper.readValue(responseString,List.class);
+                //List<Object> Result=objectMapper.readValue(responseString,List.class);
                 //     Map aux = (Map) mapResult.get("RFIDEquipmentDetails_MT");
-                //List lis=(List)result.get("Points");
+                //List lis=(List)Result.get("Points");
                 //System.out.print("entro");
                 finalResult = mapResult;
 

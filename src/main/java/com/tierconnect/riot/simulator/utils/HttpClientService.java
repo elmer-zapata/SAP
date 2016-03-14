@@ -1,20 +1,22 @@
 package com.tierconnect.riot.simulator.utils;
 
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.HttpEntity;
-import org.apache.http.NameValuePair;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.HttpClientBuilder;
 
-
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -44,9 +46,11 @@ public class HttpClientService{
         builder.setPath(endpoint);
     }
 
-
-    public Object httpRequest(List<NameValuePair> params, String method, Object objectInput, Class classresponse)
-    throws IOException, URISyntaxException{
+    public Object httpRequest(List<NameValuePair> params,
+                              String method,
+                              Object objectInput,
+                              Class classResponse,
+                              String fileName) throws IOException, URISyntaxException{
         if (params != null) {
             for(NameValuePair nameValuePair : params){
                 builder.setParameter(nameValuePair.getName(), nameValuePair.getValue());
@@ -61,15 +65,33 @@ public class HttpClientService{
             case "POST":
                 request = new HttpPost(uri);
                 if (objectInput != null) {
-                    StringEntity jsonEntity = new StringEntity(JSonConverter.objectToJsonString(objectInput));
-                    ((HttpPost)request).setEntity(jsonEntity);
+
+                    if (objectInput instanceof String) {
+
+                        File file = new File((String)objectInput);
+                        MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
+                        multipartEntityBuilder.addBinaryBody(fileName,
+                                                             file,
+                                                             ContentType.create("text/csv"),
+                                                             file.getName());
+                        ((HttpPost)request).setEntity(multipartEntityBuilder.build());
+                    }
+                    else {
+                        StringEntity jsonEntity = new StringEntity(JSonConverter.objectToJsonString(objectInput));
+                        ((HttpPost)request).setEntity(jsonEntity);
+                        request.addHeader("content-type", "application/json");
+                    }
                 }
                 break;
             case "PUT":
                 request = new HttpPut(uri);
                 if (objectInput != null) {
+
                     StringEntity jsonEntity = new StringEntity(JSonConverter.objectToJsonString(objectInput));
                     ((HttpPut)request).setEntity(jsonEntity);
+                    ((HttpPut)request).setEntity(jsonEntity);
+                    request.addHeader("content-type", "application/json");
+
                 }
                 break;
         }
@@ -77,7 +99,6 @@ public class HttpClientService{
         HttpResponse response;
         Object result = null;
         try{
-            request.addHeader("content-type", "application/json");
             request.addHeader("Api_key", USER_SERVICE);
             response = httpClient.execute(request);
             HttpEntity entity = response.getEntity();
@@ -88,7 +109,7 @@ public class HttpClientService{
                     // A Simple JSON Response Read
                     InputStream inputStream = entity.getContent();
                     result = JSonConverter.jsonStringToObject(HttpResponseConverter.convertStreamToString(inputStream),
-                                                              classresponse);
+                                                              classResponse);
                     inputStream.close();
                 }
 
@@ -100,4 +121,6 @@ public class HttpClientService{
         }
         return result;
     }
+
+
 }

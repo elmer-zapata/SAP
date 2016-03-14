@@ -34,7 +34,8 @@ public class ZoneTypeDAO extends DAO{
         return (ListZoneTypeResponse)httpClientService.httpRequest(nameValuePairList,
                                                                    "GET",
                                                                    null,
-                                                                   ListZoneTypeResponse.class);
+                                                                   ListZoneTypeResponse.class,
+                                                                   "");
 
     }
 
@@ -43,6 +44,6 @@ public class ZoneTypeDAO extends DAO{
         group.setId(idGroup);
         zoneType.setGroup(group);
         zoneType.setZonePropertyList(new ArrayList<ZoneProperty>());
-        return (ZoneType)httpClientService.httpRequest(null, "PUT", zoneType, ZoneType.class);
+        return (ZoneType)httpClientService.httpRequest(null, "PUT", zoneType, ZoneType.class, "");
     }
 }

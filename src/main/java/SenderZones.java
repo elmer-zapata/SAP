@@ -116,9 +116,9 @@ public class SenderZones{
             Map<String, Object> mapResult = new HashMap<String, Object>();
             try{
                 mapResult = objectMapper.readValue(responseString, HashMap.class);
-                //List<Object> result=objectMapper.readValue(responseString,List.class);
+                //List<Object> Result=objectMapper.readValue(responseString,List.class);
                 //     Map aux = (Map) mapResult.get("RFIDEquipmentDetails_MT");
-                //List lis=(List)result.get("Points");
+                //List lis=(List)Result.get("Points");
                 //System.out.print("entro");
                 finalResult = mapResult;
 
@@ -275,6 +275,7 @@ public class SenderZones{
                                     String portPut,
                                     String idFacilityMap,
                                     String groupForSearch) throws IOException{
+
         Map<String, Object> zones = getSomething(hostGet
                                                  + ":"
                                                  + portGet
@@ -282,16 +283,17 @@ public class SenderZones{
                                                  + idFacilityMap
                                                  + "&extra=localMap%2Cgroup%2CzoneGroup%2CzoneType");
         System.out.println(hostGet
-                         + ":"
-                         + portGet
-                         + "/riot-core-services/api/zone/?pageSize=1&where=localMap.id%3D"
-                         + idFacilityMap);
+                           + ":"
+                           + portGet
+                           + "/riot-core-services/api/zone/?pageSize=1&where=localMap.id%3D"
+                           + idFacilityMap);
 
         ///trabajar en esto id hardcode
 
         Map<String, Object> zoneType = getSomething(hostPut + ":8080/riot-core-services/api/zoneType/?where=id%3D2");
 
         String idGroup = getSomeValueGroup(groupForSearch, hostPut, portPut, "id");
+
         System.out.println(idGroup);
         Map<String, Object> zoneGroup = getSomething(hostPut
                                                      + ":8080/riot-core-services/api/zoneGroup/?where=group.id%3D"
@@ -301,7 +303,8 @@ public class SenderZones{
         String idZG = listZoneGroup.get(0).get("id").toString();
 
         Map<String, Object> localMap = getSomething(hostPut
-                                                    + ":8080/riot-core-services/api/localMap/?where=name%3DMain%20Store");
+                                                    + ":8080/riot-core-services/api/localMap/?"
+                                                    + "where=name%3DMain%20Store");
         List<Map<String, Object>> map = (List)localMap.get("results");
         String idMap = map.get(0).get("id").toString();
 
