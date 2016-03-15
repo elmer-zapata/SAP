@@ -24,13 +24,12 @@ public class ImportDAO extends DAO{
         importPath = Paths.get(System.getProperty("user.dir"), pathField, fileNameWithEx).toString();
     }
 
-    //import/thing?thingTypeCode=product_code&runRules=false
-    public ImportDAO(String host, int port, String user, String pathField, String fileNameWithEx){
+    public ImportDAO(String host, int port, String user, String pathFileImport, String fileNameWithEx){
         super(host, port, ("/riot-core-services/api/fileManagement/import/thing"), user);
-        importPath = Paths.get(System.getProperty("user.dir"), pathField, fileNameWithEx).toString();
+        importPath = Paths.get(System.getProperty("user.dir"), pathFileImport, fileNameWithEx).toString();
     }
 
-    public Result Import(String type, String thingTypeCode, Boolean runRules) throws IOException, URISyntaxException{
+    public Result importFile(String type, String thingTypeCode, Boolean runRules) throws IOException, URISyntaxException{
         List<NameValuePair> nameValuePairList = new ArrayList<>();
         nameValuePairList.add(new BasicNameValuePair("thingTypeCode", thingTypeCode));
         nameValuePairList.add(new BasicNameValuePair("runRules", runRules.toString()));

@@ -50,7 +50,7 @@ public class HttpClientService{
                               String method,
                               Object objectInput,
                               Class classResponse,
-                              String fileName) throws IOException, URISyntaxException{
+                              String type) throws IOException, URISyntaxException{
         if (params != null) {
             for(NameValuePair nameValuePair : params){
                 builder.setParameter(nameValuePair.getName(), nameValuePair.getValue());
@@ -70,7 +70,7 @@ public class HttpClientService{
 
                         File file = new File((String)objectInput);
                         MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
-                        multipartEntityBuilder.addBinaryBody(fileName,
+                        multipartEntityBuilder.addBinaryBody(type,
                                                              file,
                                                              ContentType.create("text/csv"),
                                                              file.getName());
