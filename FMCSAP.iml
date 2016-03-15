@@ -39,5 +39,6 @@
     <orderEntry type="library" scope="TEST" name="Gradle: org.codehaus.groovy:groovy-test:2.4.3" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: org.codehaus.groovy:groovy:2.4.3" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.commons:commons-math3:3.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.poi:poi:3.9" level="project" />
   </component>
 </module>

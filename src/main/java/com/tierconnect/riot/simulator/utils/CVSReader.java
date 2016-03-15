@@ -18,11 +18,11 @@ public class CVSReader{
     private String cvsSplitBy;
     private Boolean firstLineHeader;
 
-    public CVSReader(String pathField, String fileNameWithEx, String cvsSplitByField, Boolean firstLineHeaderField){
+    public CVSReader(String path, String fileNameWithEx, String cvsSplitByField, Boolean firstLineHeaderField){
 
         cvsSplitBy = cvsSplitByField;
         firstLineHeader = firstLineHeaderField;
-        cvsFullPath = Paths.get(System.getProperty("user.dir"), pathField, fileNameWithEx).toString();
+        cvsFullPath = Paths.get(System.getProperty("user.dir"), path, fileNameWithEx).toString();
     }
 
     public List<String[]> parse(){
