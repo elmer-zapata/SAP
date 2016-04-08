@@ -1,6 +1,7 @@
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -43,31 +44,27 @@ import java.util.Date;
 /**
  * Created by ezapata on 08-Oct-15.
  */
-public class Sender{
+public class Sender {
     static DefaultHttpClient client;
 
-    static{
-        TrustStrategy acceptingTrustStrategy = new TrustStrategy(){
+    static {
+        TrustStrategy acceptingTrustStrategy = new TrustStrategy() {
 
             @Override
-            public boolean isTrusted(X509Certificate[] certificate, String authType){
+            public boolean isTrusted(X509Certificate[] certificate, String authType) {
                 return true;
             }
         };
         SSLSocketFactory sf = null;
-        try{
+        try {
             sf = new SSLSocketFactory(acceptingTrustStrategy, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-        }
-        catch(NoSuchAlgorithmException e){
+        } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
-        }
-        catch(KeyManagementException e){
+        } catch (KeyManagementException e) {
             e.printStackTrace();
-        }
-        catch(KeyStoreException e){
+        } catch (KeyStoreException e) {
             e.printStackTrace();
-        }
-        catch(UnrecoverableKeyException e){
+        } catch (UnrecoverableKeyException e) {
             e.printStackTrace();
         }
         SchemeRegistry registry = new SchemeRegistry();
@@ -80,7 +77,7 @@ public class Sender{
     }
 
 
-    public static Map getSomething(String endpoint) throws IOException{
+    public static Map getSomething(String endpoint) throws IOException {
 
         System.out.println(endpoint);
         HttpClient client = HttpClientBuilder.create().build();
@@ -96,7 +93,7 @@ public class Sender{
         if (entity != null && entity.getContent() != null) {
             BufferedReader in = new BufferedReader(new InputStreamReader(entity.getContent()));
             String inputLine;
-            while((inputLine = in.readLine()) != null){
+            while ((inputLine = in.readLine()) != null) {
                 responseStringBuffer.append(inputLine);
             }
             in.close();
@@ -104,17 +101,16 @@ public class Sender{
         String responseString = responseStringBuffer.toString();
         if (StringUtils.isNotBlank(responseString)) {
             Map<String, Object> mapResult;
-            try{
+            try {
                 mapResult = objectMapper.readValue(responseString, HashMap.class);
                 finalResult = mapResult;
-            }
-            catch(Exception ex){
+            } catch (Exception ex) {
             }
         }
         return finalResult;
     }
 
-    public static void patchSomething(String endpoint, Map message) throws IOException{
+    public static void patchSomething(String endpoint, Map message) throws IOException {
 
 
         HttpClient client = HttpClientBuilder.create().build();
@@ -144,7 +140,7 @@ public class Sender{
         if (entity != null && entity.getContent() != null) {
             BufferedReader in = new BufferedReader(new InputStreamReader(entity.getContent()));
             String inputLine;
-            while((inputLine = in.readLine()) != null){
+            while ((inputLine = in.readLine()) != null) {
                 responseStringBuffer.append(inputLine);
             }
             in.close();
@@ -153,24 +149,22 @@ public class Sender{
         int statusCode = response.getStatusLine().getStatusCode();
         if (StringUtils.isNotBlank(responseString)) {
             Map<String, Object> mapResult = new HashMap<String, Object>();
-            try{
+            try {
                 mapResult = objectMapper.readValue(responseString, HashMap.class);
                 //        System.out.print("entro");
                 finalResult = mapResult;
 
 
-            }
-            catch(Exception ex){
+            } catch (Exception ex) {
                 error = true;
                 errorMessage = ex.getMessage();
             }
-        }
-        else {
+        } else {
             error = true;
             errorMessage = "Empty Response from SAP";
         }
 
-        List<Map<String, Object>> objlist = (List)finalResult.get("results");
+        List<Map<String, Object>> objlist = (List) finalResult.get("results");
         //        Map<String,Object> es=objlist.get(0);
         // System.out.print(es.get("zonePoints"));
 
@@ -184,9 +178,9 @@ public class Sender{
                                   String thingTypeCode,
                                   String zonaName,
                                   String idThing,
-                                  String timePush){
+                                  String timePush) {
 
-        try{
+        try {
             Map message = new HashMap<>();
             Map messageDetail = new HashMap<>();
             Map messageDetailZone = new HashMap<>();
@@ -203,8 +197,7 @@ public class Sender{
 
             System.out.println("Changing zone of thing " + message);
             patchSomething("http://" + host + ":" + port + "/riot-core-services/api/thing/" + idThing, message);
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
@@ -217,8 +210,8 @@ public class Sender{
                                        String zonaName,
                                        String idThing,
                                        String timePush,
-                                       String key){
-        try{
+                                       String key) {
+        try {
             Map message = new HashMap<>();
             Map messageDetail = new HashMap<>();
             Map messageDetailZone = new HashMap<>();
@@ -235,22 +228,21 @@ public class Sender{
             System.out.println(message);
             System.out.println(idThing);
             patchSomething("http://" + host + ":" + port + "/riot-core-services/api/thing/" + idThing, message);
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
     }
 
-    public static String groupThing(String idGroup, String host, String port) throws IOException{
+    public static String groupThing(String idGroup, String host, String port) throws IOException {
         Map<String, Object> group = getSomething("http://"
-                                                 + host
-                                                 + ":"
-                                                 + port
-                                                 + "/riot-core-services/api/group/?where=id%3D"
-                                                 + idGroup);
+                + host
+                + ":"
+                + port
+                + "/riot-core-services/api/group/?where=id%3D"
+                + idGroup);
 
-        List<Map<String, Object>> grou = (List)group.get("results");
+        List<Map<String, Object>> grou = (List) group.get("results");
         if (group == null) {
             System.out.println("si");
         }
@@ -259,19 +251,20 @@ public class Sender{
 
     }
 
-    public static void main(String[] arg) throws IOException{
+    public static void main(String[] arg) throws IOException {
 
         int numRecords = 200;
-        int clientZoneMovMax = 9;
+        int clientZoneMovMax = 300;
         int minTimeInZoneSec = 30;
         int maxTimeInZoneSec = 300;
         int simulationHours = 12;
         int clientIntervalSec = 30;
 
         //probability shipping product and no shipping
-        double shippingProb = 0.25;
+        double changeTakeProb = 0.25;
         double purchaseProb = 0.50;
         double fittingRoomProb = 0.75;
+        double chanceSeeProdInZone = 0.15;
 
         String host = "localhost";
         String port = "8080";
@@ -286,81 +279,84 @@ public class Sender{
         zoneInCode = zoneInCode.replace(" ", "%20");
         zoneExitCode = zoneExitCode.replace(" ", "%20");
 
-        //        long current = System.currentTimeMillis();
-        // get things different localMap.id%3D3
+        String pathField = "/src/main/resources/xls/";
+
+        String fileName = "graph_matrix.xls";
+        String xlsSheet = "graph_matrix";
+
         Map<String, Object> zones = getSomething("http://"
-                                                 + host
-                                                 + ":"
-                                                 + port
-                                                 + "/riot-core-services/api/zone/?"
-                                                 + "pageSize=-1&"
-                                                 + "where=!(code%3D"
-                                                 + zoneInCode
-                                                 + ")%26!(code%3D"
-                                                 + zoneExitCode
-                                                 + ")%26!(code%3D"
-                                                 + Fitting1
-                                                 + ")%26!(code%3D"
-                                                 + Fitting2
-                                                 + ")%26localMap.id%3D2");
+                + host
+                + ":"
+                + port
+                + "/riot-core-services/api/zone/?"
+                + "pageSize=-1&"
+                + "where=!(code%3D"
+                + zoneInCode
+                + ")%26!(code%3D"
+                + zoneExitCode
+                + ")%26localMap.id%3D2");
 
         //get de todos los customers
         Map<String, Object> customerThings = getSomething("http://"
-                                                          +
-                                                          host
-                                                          + ":"
-                                                          + port
-                                                          + "/riot-core-services/api/thing/?pageSize=-1&where=thingType.thingTypeCode%3D"
-                                                          + thingTypeCode
-                                                          + "&extra=thingType%2Cgroup");
+                +
+                host
+                + ":"
+                + port
+                + "/riot-core-services/api/thing/?pageSize=-1&where=thingType.thingTypeCode%3D"
+                + thingTypeCode
+                + "&extra=thingType%2Cgroup");
 
         Map<String, Object> thingsRFID = getSomething("http://"
-                                                      +
-                                                      host
-                                                      + ":"
-                                                      + port
-                                                      + "/riot-core-services/api/thing/?"
-                                                      + "pageSize=-1&"
-                                                      + "where=thingType.thingTypeCode%3Dretail.RFID.tag&"
-                                                      + "extra=thingType%2Cgroup");
+                +
+                host
+                + ":"
+                + port
+                + "/riot-core-services/api/thing/?"
+                + "pageSize=-1&"
+                + "where=thingType.thingTypeCode%3Dretail.RFID.tag&"
+                + "extra=thingType%2Cgroup");
 
         //Map list of thing customers, zones and RFID's
 
-        List<Map<String, Object>> objCustomerThings = (List)customerThings.get("results");
-        List<Map<String, Object>> objZones = (List)zones.get("results");
-        List<Map<String, Object>> objThingsRFID = (List)thingsRFID.get("results");
+        List<Map<String, Object>> objCustomerThings = (List) customerThings.get("results");
+        List<Map<String, Object>> objZones = (List) zones.get("results");
+        List<Map<String, Object>> objThingsRFID = (List) thingsRFID.get("results");
 
 
         System.out.println("Number of RFID's: " + objThingsRFID.size() + " Number of Zones: " + objZones.size());
 
         //set random zones to products in map
         System.out.println("******BEGIN MODIFY ZONES**********");
-        for(int k = 0; k < objThingsRFID.size(); k++){
+        for (int k = 0; k < objThingsRFID.size(); k++) {
             modifyZone(host,
-                       port,
-                       ">ViZix.retail>Retail.Main.Store",
-                       objThingsRFID.get(k).get("name").toString(),
-                       objThingsRFID.get(k).get("serial").toString(),
-                       "retail.RFID.tag",
-                       objZones.get((int)(Math.random() * objZones.size())).get("code").toString(),
-                       objThingsRFID.get(k).get("id").toString(),
-                       null);
+                    port,
+                    ">ViZix.retail>Retail.Main.Store",
+                    objThingsRFID.get(k).get("name").toString(),
+                    objThingsRFID.get(k).get("serial").toString(),
+                    "retail.RFID.tag",
+                    objZones.get((int) (Math.random() * objZones.size())).get("code").toString(),
+                    objThingsRFID.get(k).get("id").toString(),
+                    null);
         }
 
-        Simulator.Simulate(objCustomerThings,
-                           objZones,
-                           host,
-                           port,
-                           shippingProb,
-                           purchaseProb,
-                           fittingRoomProb,
-                           clientZoneMovMax,
-                           minTimeInZoneSec,
-                           maxTimeInZoneSec,
-                           zoneExitCode,
-                           Fitting1,
-                           Fitting2,
-                           simulationHours,
-                           clientIntervalSec);
+        Simulator.simulate(objCustomerThings,
+                host,
+                port,
+                changeTakeProb,
+                chanceSeeProdInZone,
+                purchaseProb,
+                fittingRoomProb,
+                clientZoneMovMax,
+                minTimeInZoneSec,
+                maxTimeInZoneSec,
+                pathField,
+                fileName,
+                xlsSheet,
+                zoneInCode,
+                zoneExitCode,
+                Fitting1,
+                Fitting2,
+                simulationHours,
+                clientIntervalSec);
     }
 }

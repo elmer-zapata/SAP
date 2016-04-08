@@ -17,11 +17,11 @@ import java.util.List;
  * XLS READER
  * Created by angelchambi on 3/15/16.
  */
-public class XLSReader{
+public class XlsReader{
     private String xlsFullPath;
 
 
-    public XLSReader(String path, String fileNameWithEx){
+    public XlsReader(String path, String fileNameWithEx){
         xlsFullPath = Paths.get(System.getProperty("user.dir"), path, fileNameWithEx).toString();
     }
 
@@ -29,10 +29,10 @@ public class XLSReader{
         List<List<String>> transitionMatrix = null;
         try{
 
-            FileInputStream file = new FileInputStream(new File(xlsFullPath));
+            InputStream file = new FileInputStream(xlsFullPath);
 
             //Get the workbook instance for XLS file
-            HSSFWorkbook workbook = new HSSFWorkbook(file);
+            HSSFWorkbook workbook = new HSSFWorkbook(file,false);
 
             //Get first sheet from the workbook
             HSSFSheet sheet = workbook.getSheet(sheetName);
@@ -57,25 +57,20 @@ public class XLSReader{
                     switch(cell.getCellType()){
                         case Cell.CELL_TYPE_BOOLEAN:
                             rowList.add(convertUtilsBean.convert(cell.getBooleanCellValue()));
-                            System.out.print(cell.getBooleanCellValue() + "\t\t");
                             break;
                         case Cell.CELL_TYPE_NUMERIC:
                             rowList.add(convertUtilsBean.convert(cell.getNumericCellValue()));
-                            System.out.print(cell.getNumericCellValue() + "\t\t");
                             break;
                         case Cell.CELL_TYPE_STRING:
-                            System.out.print(cell.getStringCellValue() + "\t\t");
                             rowList.add(cell.getStringCellValue());
                             break;
                     }
                 }
-                transitionMatrix.add(rowList);
-                System.out.println("");
+                if (rowList.size() != 0) {
+                    transitionMatrix.add(rowList);
+                }
             }
             file.close();
-            FileOutputStream out = new FileOutputStream(new File(xlsFullPath));
-            workbook.write(out);
-            out.close();
         }
         catch(IOException e){
             e.printStackTrace();
