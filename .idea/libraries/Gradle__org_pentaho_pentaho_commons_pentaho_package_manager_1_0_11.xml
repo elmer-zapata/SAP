@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.pentaho.pentaho-commons:pentaho-package-manager:1.0.11">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.pentaho.pentaho-commons/pentaho-package-manager/1.0.11/2aa56cf48b292297955d479423150078bb2cc925/pentaho-package-manager-1.0.11.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.pentaho.pentaho-commons/pentaho-package-manager/1.0.11/4ce3c1cec41cdadc569ba073f7a1782c714f2504/pentaho-package-manager-1.0.11-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

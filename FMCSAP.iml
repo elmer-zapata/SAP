@@ -68,5 +68,10 @@
     <orderEntry type="library" name="Gradle: org.apache.poi:poi:3.14" level="project" />
     <orderEntry type="library" name="Gradle: commons-codec:commons-codec:1.10" level="project" />
     <orderEntry type="library" name="Gradle: org.python:jython:2.7.0" level="project" />
+    <orderEntry type="library" name="Gradle: nz.ac.waikato.cms.weka:weka-dev:3.7.13" level="project" />
+    <orderEntry type="library" name="Gradle: nz.ac.waikato.cms.weka.thirdparty:java-cup-11b:2015.03.26" level="project" />
+    <orderEntry type="library" name="Gradle: nz.ac.waikato.cms.weka.thirdparty:java-cup-11b-runtime:2015.03.26" level="project" />
+    <orderEntry type="library" name="Gradle: org.pentaho.pentaho-commons:pentaho-package-manager:1.0.11" level="project" />
+    <orderEntry type="library" name="timeseriesforecasting-1.0.12" level="project" />
   </component>
 </module>
